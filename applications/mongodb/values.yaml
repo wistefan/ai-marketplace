@@ -1,0 +1,90 @@
+mongodb:
+  # Values for bitnami/mongodb Helm Chart
+  #
+  # Chart values file:
+  # ref: https://github.com/bitnami/charts/blob/master/bitnami/mongodb/values.yaml
+  #
+  # Deployment on FIWARE OpenShift Cluster
+  #   *.apps.fiware.fiware.dev
+  #
+
+  image:
+    ## Bitnami MongoDB registry
+    ##
+    registry: docker.io
+    ## Bitnami MongoDB image name
+    ##
+    repository: bitnami/mongodb
+    ## Bitnami MongoDB image tag
+    ## ref: https://hub.docker.com/r/bitnami/mongodb/tags/
+    ##
+    tag: 3.6.21
+    #tag: 3.4.10-r0
+    ## Specify a imagePullPolicy
+    ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+    ##
+    pullPolicy: IfNotPresent
+
+  ## MongoDB architecture. Allowed values: standalone or replicaset
+  ##
+  architecture: standalone
+
+  ## Use StatefulSet instead of Deployment when deploying standalone
+  ##
+  useStatefulSet: false
+
+  ## MongoDB Authentication parameters
+  ##
+  auth:
+    ## Enable authentication
+    ## ref: https://docs.mongodb.com/manual/tutorial/enable-authentication/
+    ##
+    enabled: true
+    ## MongoDB root password
+    ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#setting-the-root-password-on-first-run
+    ##
+    rootPassword: EN3rpQVSB5d8HOPYvz9w
+
+  ## initdb scripts
+  ## Specify dictionary of scripts to be run at first boot
+  initdbScripts:
+    init_db.js: |
+      // Setup charging DB
+      db = db.getSiblingDB('charging_db');
+      db.createUser(
+      {
+        user: "charging",
+        pwd: "1cOX0DkUSZLopOo0u0ld",
+        roles: [
+          {
+            role: "readWrite",
+            db: "charging_db"
+          }
+        ]
+      });
+      // Setup proxy DB
+      db = db.getSiblingDB('belp_db');
+      db.createUser(
+      {
+        user: "belp",
+        pwd: "FHrmEApoPMDG6dMIyX5H",
+        roles: [
+          {
+            role: "readWrite",
+            db: "belp_db"
+          }
+        ]
+      });
+
+  ## MongoDB pods' Security Context.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ##
+  podSecurityContext:
+    enabled: false
+
+  ## MongoDB containers' Security Context (main and metrics container).
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+  ##
+  containerSecurityContext:
+    enabled: false
+
