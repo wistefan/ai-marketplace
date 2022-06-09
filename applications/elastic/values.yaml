@@ -3,6 +3,11 @@ elasticsearch:
   minimumMasterNodes: 1
   clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
 
+  rbac:
+    openshift:
+      create: true
+      # Specific of this chart. Creates anyuid Role and RoleBinding
+      openshift: true
 
   image: "docker.elastic.co/elasticsearch/elasticsearch"
   imageTag: "7.5.1"
