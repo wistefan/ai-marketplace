@@ -1,0 +1,8 @@
+apiVersion: v2
+name: ai-marketplace
+description: Helm chart to deploy the AI-Marketplace components
+type: application
+version: 0.0.1
+maintainers:
+  - name: Stefan Wiedemann 
+    email: stefan.wiedemann@fiware.org

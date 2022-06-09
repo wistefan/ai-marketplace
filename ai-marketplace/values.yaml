@@ -1,0 +1,41 @@
+source: https://github.com/wistefan/ai-marketplace
+release: ai-marketplace
+destination_namespace: &destination ai-marketplace
+branch: &branch main
+secretsEnabled: &secretsEnabled false
+host: &host
+tlsSecret: &tlsSecret
+
+applications:
+  # Dont change mongodb name, current orion config relies on it.
+  - name: mongodb
+    enabled: true
+    source_path: applications/mongodb
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+  
+  - name: elastic
+    enabled: true
+    source_path: applications/elastic
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+  
+  - name: keyrock
+    enabled: true
+    source_path: applications/keyrock
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+  
+  - name: mysql
+    enabled: true
+    source_path: applications/mysql
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
