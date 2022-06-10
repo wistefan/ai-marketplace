@@ -1,5 +1,5 @@
 # should a certificate for the address automatically be generated
-cerficate:
+certificate:
   enabled: true
   secretName: keyrock-tls-secret
   issuer:

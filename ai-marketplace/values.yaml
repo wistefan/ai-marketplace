@@ -35,8 +35,6 @@ applications:
       keyrock:
         route: 
           host: login.ki-marktplatz.fiware.dev
-          annotations: 
-            cert-utils-operator.redhat-cop.io/certs-from-secret: ki-marktplatz-tls-secret
         host: https://login.ki-marktplatz.fiware.dev
   - name: mysql
     enabled: true
