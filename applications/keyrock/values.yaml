@@ -1,5 +1,11 @@
-host: &host
-tlsSecret: &tlsSecret
+# should a certificate for the address automatically be generated
+cerficate:
+  enabled: true
+  secretName: keyrock-tls-secret
+  issuer:
+    kind: ClusterIssuer
+    name: letsencrypt-aws-prod
+
 keyrock:
   # Values for fiware/keyrock Helm Chart
   #
@@ -33,6 +39,8 @@ keyrock:
     # -- tls configuration for the route
     tls:
       termination: edge
+    annotations: 
+      cert-utils-operator.redhat-cop.io/certs-from-secret: keyrock-tls-secret
     
   ## ingress configuration
   ## OpenShift: oc label namespace marketplace ingress=nginx
