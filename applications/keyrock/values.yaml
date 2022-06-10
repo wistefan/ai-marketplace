@@ -25,7 +25,7 @@ statefulset:
 ## openshift specific route definition. Will not work on plain k8s
 route:
   ## -- should the deployment create openshift routes
-  enabled: false
+  enabled: true
   # -- host to be used
   #host: marketplace-accounts.apps.fiware.fiware.dev
   # -- tls configuration for the route
