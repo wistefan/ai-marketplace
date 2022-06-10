@@ -168,7 +168,7 @@ business-api-ecosystem:
     ## database configuration for Charging backend (MongoDB)
     db:
       ## host of the database to be used
-      host: mysql
+      host: mongodb
       ## Database name for connecting the database
       database: charging_db
       ## username for connecting the database
