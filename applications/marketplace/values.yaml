@@ -7,8 +7,8 @@ certificate:
     kind: ClusterIssuer
     name: letsencrypt-aws-prod
   dns:
-    commonName: *.ki-marktplatz.fiware.dev
-    name: *.ki-marktplatz.fiware.dev
+    commonName: "*.ki-marktplatz.fiware.dev"
+    name: "*.ki-marktplatz.fiware.dev"
 
 business-api-ecosystem:
   # Values for fiware/business-api-ecosystem Helm Chart

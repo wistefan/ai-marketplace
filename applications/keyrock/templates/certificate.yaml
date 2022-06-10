@@ -7,7 +7,7 @@ spec:
   secretName: {{ .Values.certificate.secretName }}
   issuerRef: 
     {{- toYaml .Values.certificate.issuer | nindent 4 }}
-  commonName: {{ .Values.keyrock.route.host | quote }}
+  commonName: {{ .Values.keyrock.route.host }}
   dnsNames:
-    - {{ .Values.keyrock.route.host | quote }}
+    - {{ .Values.keyrock.route.host }}
 {{- end -}}
