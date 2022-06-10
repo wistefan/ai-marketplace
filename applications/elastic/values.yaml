@@ -4,8 +4,8 @@ elasticsearch:
   clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
 
   rbac:
-    openshift:
-      create: false
+    create: false
+    serviceAccountName: elasticsearch-sa
 
   image: "docker.elastic.co/elasticsearch/elasticsearch"
   imageTag: "7.5.1"
