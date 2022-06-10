@@ -38,25 +38,7 @@ keyrock:
   ingress:
     ## should there be an ingress to connect keyrock with the public internet
     enabled: false
-    # -- annotations to be added to the ingress
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      cert-manager.io/cluster-issuer: letsencrypt-prod
-    # -- all hosts to be provided
-    hosts:
-      - host: idp.ai-marketplace.fiware.io
-        paths:
-          - /
-      - host: login.ki-marktplatz.com
-        paths:
-          - /
-    # -- configure the ingress' tls
-    tls:
-      - secretName: ai-mp-keyrock-prod-tls
-        hosts: 
-          - idp.ai-marketplace.fiware.io
-          - login.ki-marktplatz.com
-
+  
   # -- host where keyrock is available at
   #host: https://idp.ai-marketplace.fiware.io
   host: https://login.ki-marktplatz.com
