@@ -1,3 +1,5 @@
+host: &host
+tlsSecret: &tlsSecret
 keyrock:
   # Values for fiware/keyrock Helm Chart
   #
@@ -28,10 +30,12 @@ keyrock:
     ## -- should the deployment create openshift routes
     enabled: true
     # -- host to be used
-    #host: marketplace-accounts.apps.fiware.fiware.dev
+    host: *host
     # -- tls configuration for the route
-    #tls:
-    #  termination: edge
+    tls:
+      termination: edge
+    annotations:
+      cert-utils-operator.redhat-cop.io/certs-from-secret:  *tlsSecret
     
   ## ingress configuration
   ## OpenShift: oc label namespace marketplace ingress=nginx
@@ -41,7 +45,7 @@ keyrock:
   
   # -- host where keyrock is available at
   #host: https://idp.ai-marketplace.fiware.io
-  host: https://login.ki-marktplatz.com
+  host: https://login.ki-marktplatz.fiware.dev
 
   ## database configuration for keyrock
   db:

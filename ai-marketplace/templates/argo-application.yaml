@@ -44,19 +44,15 @@ spec:
 {{- end }}
 {{- if or (.values) ($host) ($tlsSecret) (.overwriteHost) (.overwriteSecret) }}
       values: |
-{{- if or ($host) ($tlsSecret) (.overwriteHost) (.overwriteSecret) }}
-        route:
 {{- if .overwriteSecret }}
-          annotations: 
-            cert-utils-operator.redhat-cop.io/certs-from-secret: {{ .overwriteSecret }}
+        tlsSecret:  {{ .overwriteSecret }}
 {{- else if ($tlsSecret) }}      
-          annotations: 
-            cert-utils-operator.redhat-cop.io/certs-from-secret: {{ $tlsSecret }}
+        tlsSecret: {{ $tlsSecret }}
 {{- end }}
 {{- if .overwriteHost }}
-          host: {{ .overwriteHost }}
+        host: {{ .overwriteHost }}
 {{- else if ($host) }}      
-          host: {{ .name }}.{{ $host }}
+        host: {{ .overwriteHost }}
 {{- end }}
 {{- end }}
 {{- if (.values) }}      
