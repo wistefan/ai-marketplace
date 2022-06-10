@@ -32,9 +32,10 @@ applications:
     helm_values:
     - values.yaml
     values:
-      route: 
-        host: login.ki-marktplatz.fiware.dev
-      host: https://login.ki-marktplatz.fiware.dev
+      keyrock:
+        route: 
+          host: login.ki-marktplatz.fiware.dev
+        host: https://login.ki-marktplatz.fiware.dev
   - name: mysql
     enabled: true
     source_path: applications/mysql
