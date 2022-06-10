@@ -5,10 +5,11 @@ elasticsearch:
 
   rbac:
     openshift:
-      create: true
-      # Specific of this chart. Creates anyuid Role and RoleBinding
-      openshift: true
+      create: false
 
   image: "docker.elastic.co/elasticsearch/elasticsearch"
   imageTag: "7.5.1"
   imagePullPolicy: "IfNotPresent"
+
+openshift: 
+  enabled: true

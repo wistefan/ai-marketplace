@@ -1,11 +1,9 @@
-{{- if .Values.rbac.openshift }}
+{{- if .Values.openshift }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ template "elasticsearch.fullname" . }}-scc-anyuid
+  name: {{ .Release.Name }}-elasticsearch-scc-anyuid
   labels:
-    app: {{ template "elasticsearch.fullname" . }}
-    chart: {{ template "elasticsearch.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 rules:
