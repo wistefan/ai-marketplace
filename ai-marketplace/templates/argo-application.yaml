@@ -58,7 +58,6 @@ spec:
 {{- if (.values) }}      
 {{- toYaml .values | nindent 8 }}
 {{- end }}
-{{- end }}
 {{- if or .releaseName .name }}
       releaseName: {{ .releaseName | default .name }}
 {{- end }}
