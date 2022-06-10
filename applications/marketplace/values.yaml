@@ -237,6 +237,7 @@ business-api-ecosystem:
       # -- tls configuration for the route
       tls:
         termination: edge
+        insecureEdgeTerminationPolicy: Redirect
       annotations: 
         cert-utils-operator.redhat-cop.io/certs-from-secret: bae-tls-secret
 
