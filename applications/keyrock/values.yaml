@@ -146,7 +146,7 @@ keyrock:
     - name: IDM_EMAIL_AUTH_PASS
       value: "xsmtpsib-788b184743d347a0d255c1b5c4ed7c95d142e692bf1c83d2ddc07cd4eecddb2f-gU8MwV9p1jGdqXOz"
     - name: IDM_REGISTRATION_REDIRECT
-      value: "https://plattform.ki-marktplatz.com/Group/Welcome/Willkommen"
+      value: "https://marketplace.ki-marktplatz.fiware.dev/Group/Welcome/Willkommen"
     - name: IDM_REGISTRATION_EXTENSION
       value: "/?new_user=1"
     - name: IDM_CSP_FORM_ACTION

@@ -39,7 +39,7 @@ business-api-ecosystem:
   ## Should match the host of the Ingress or Route of the Logic Proxy
   ##
   #externalUrl: https://marketplace.ai-marketplace.fiware.io
-  externalUrl: https://daten.ki-marktplatz.fiware.dev
+  externalUrl: https://marketplace.ki-marktplatz.fiware.dev
 
   ## Configuration for biz-ecosystem-apis component
   ##
