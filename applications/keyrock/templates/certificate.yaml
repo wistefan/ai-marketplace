@@ -1,3 +1,4 @@
+{{- .Values.certificate.enabled -}}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -9,3 +10,4 @@ spec:
   commonName: {{ .Values.keyrock.route.host | quote }}
   dnsNames:
     - {{ .Values.keyrock.route.host | quote }}
+{{- end -}}
