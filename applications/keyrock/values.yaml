@@ -1,165 +1,166 @@
-# Values for fiware/keyrock Helm Chart
-#
-# Chart values file:
-# ref: https://github.com/FIWARE/helm-charts/blob/main/charts/keyrock/values.yaml
-#
-# Deployment on FIWARE OpenShift Cluster
-#   *.apps.fiware.fiware.dev
-#
+keyrock:
+  # Values for fiware/keyrock Helm Chart
+  #
+  # Chart values file:
+  # ref: https://github.com/FIWARE/helm-charts/blob/main/charts/keyrock/values.yaml
+  #
+  # Deployment on FIWARE OpenShift Cluster
+  #   *.apps.fiware.fiware.dev
+  #
 
-## deployment specific configuration
-statefulset:
-  ## configuration of the image to be used
-  image:
-    ## keyrock image name
-    ## ref: https://hub.docker.com/r/fiware/idm
-    repository: fiware/idm
-    ## tag of the image to be used
-    #tag: 7.8.2
-    #tag: 8.0.0
-    tag: kim-dev-rc7
-    ## specification of the image pull policy
-    pullPolicy: Always
-    #IfNotPresent
+  ## deployment specific configuration
+  statefulset:
+    ## configuration of the image to be used
+    image:
+      ## keyrock image name
+      ## ref: https://hub.docker.com/r/fiware/idm
+      repository: fiware/idm
+      ## tag of the image to be used
+      #tag: 7.8.2
+      #tag: 8.0.0
+      tag: kim-dev-rc7
+      ## specification of the image pull policy
+      pullPolicy: Always
+      #IfNotPresent
 
-## openshift specific route definition. Will not work on plain k8s
-route:
-  ## -- should the deployment create openshift routes
-  enabled: true
-  # -- host to be used
-  #host: marketplace-accounts.apps.fiware.fiware.dev
-  # -- tls configuration for the route
-  #tls:
-  #  termination: edge
-  
-## ingress configuration
-## OpenShift: oc label namespace marketplace ingress=nginx
-ingress:
-  ## should there be an ingress to connect keyrock with the public internet
-  enabled: false
-  # -- annotations to be added to the ingress
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-  # -- all hosts to be provided
-  hosts:
-    - host: idp.ai-marketplace.fiware.io
-      paths:
-        - /
-    - host: login.ki-marktplatz.com
-      paths:
-        - /
-  # -- configure the ingress' tls
-  tls:
-    - secretName: ai-mp-keyrock-prod-tls
-      hosts: 
-        - idp.ai-marketplace.fiware.io
-        - login.ki-marktplatz.com
-
-# -- host where keyrock is available at
-#host: https://idp.ai-marketplace.fiware.io
-host: https://login.ki-marktplatz.com
-
-## database configuration for keyrock
-db:
-  ## host of the database to be used
-  host: ai-mysql.ai-marketplace.svc.cluster.local
-  ## user for connecting the database
-  user: root
-  ## password for connecting the database
-  password: Wz17vZHSH2tTelVFZoab
-
-## admin configuration for accessing keyrock
-admin:
-  ## username of the initial keyrock admin
-  user: admin
-  ## password of the initial admin
-  password: 7o!u@Ig)1fDdwBuhY<6K
-  ## email address of the admin user
-  email: dennis.wendland@fiware.org
-
-## Certificates configuration
-certs:
-  ## -- Algorithm to firm ID tokens for OIDC
-  oidcJwtAlgorithm: RS256
-  ## Configuration for PVC mounted at certs/ directory for persistance of HTTPS and application certificates/keys
-  pvc:
-    ## -- Create PVC mounted at certs/ directory for persistance of HTTPS and application certificates/keys
+  ## openshift specific route definition. Will not work on plain k8s
+  route:
+    ## -- should the deployment create openshift routes
     enabled: true
-    ## -- Size of the PVC for certs/ directory
-    size: 2Gi
+    # -- host to be used
+    #host: marketplace-accounts.apps.fiware.fiware.dev
+    # -- tls configuration for the route
+    #tls:
+    #  termination: edge
     
-## Theme configuration for Keyrock
-theme:
-  ## -- Enable theme
-    enabled: true
-    ## -- Name of the theme
-    name: aimarketplace
-    ## -- Size of PVCs to be created
-    size: 1Gi
-    ## Image which holds the theme files
-    image: fiware/keyrock-theme-aimarketplace:0.0.7
-    ## -- specification of the image pull policy
-    imagePullPolicy: Always
-    ## Path to the source theme files inside the container
-    sourceTheme: /themes/aimarketplace
-    ## Path to the source image files inside the container
-    sourceImg: /img/aimarketplace
-    ## Path to the source fonts files inside the container
-    sourceFonts: /fonts/crossten
-    ## Optional: Path to the source favicon directory inside the container
-    sourceFavicon: /favicon
-    ## Mount path for the source theme files
-    mountTheme: /opt/fiware-idm/themes/aimarketplace
-    ## Mount path for the source image files
-    mountImg: /opt/fiware-idm/public/img/aimarketplace
-    ## Mount path for the source fonts files
-    mountFonts: /opt/fiware-idm/public/fonts/crossten
-    ## Mount path for the source favicon
-    mountFavicon: /opt/fiware-idm/public/favicon.ico
+  ## ingress configuration
+  ## OpenShift: oc label namespace marketplace ingress=nginx
+  ingress:
+    ## should there be an ingress to connect keyrock with the public internet
+    enabled: false
+    # -- annotations to be added to the ingress
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    # -- all hosts to be provided
+    hosts:
+      - host: idp.ai-marketplace.fiware.io
+        paths:
+          - /
+      - host: login.ki-marktplatz.com
+        paths:
+          - /
+    # -- configure the ingress' tls
+    tls:
+      - secretName: ai-mp-keyrock-prod-tls
+        hosts: 
+          - idp.ai-marketplace.fiware.io
+          - login.ki-marktplatz.com
 
-## a list of additional env vars to be set, check the keyrock docu for all available options
-## ref: https://fiware-idm.readthedocs.io/en/latest/installation_and_administration_guide/environment_variables/index.html
-additionalEnvVars:
-  - name: IDM_TITLE
-    value: AI Marketplace Login
-  - name: IDM_DEBUG
-    value: "true"
-  - name: DEBUG
-    value: "*"
-  - name: IDM_DB_NAME
-    value: idm
-  - name: IDM_DB_SEED
-    value: "true"
-  #- name: IDM_EMAIL_HOST
-  #  value: "mailgun-fiware-io.infra.svc.cluster.local"
-  #- name: IDM_EMAIL_PORT
-  #  value: "25"
-  #- name: IDM_EMAIL_ADDRESS
-  #  value: "idp-ai-marketplace@fiware.io"
-  - name: IDM_EMAIL_HOST
-    value: "smtp-relay.sendinblue.com"
-  - name: IDM_EMAIL_PORT
-    value: "587"
-  - name: IDM_EMAIL_ADDRESS
-    value: "idp@ki-marktplatz.com"
-  - name: IDM_EMAIL_SECURE
-    value: "false"
-  - name: IDM_EMAIL_AUTH_ENABLE
-    value: "true"
-  - name: IDM_EMAIL_AUTH_TYPE
-    value: login
-  - name: IDM_EMAIL_AUTH_USER
-    value: sendinblue@inno-focus.com
-  - name: IDM_EMAIL_AUTH_PASS
-    value: "xsmtpsib-788b184743d347a0d255c1b5c4ed7c95d142e692bf1c83d2ddc07cd4eecddb2f-gU8MwV9p1jGdqXOz"
-  - name: IDM_REGISTRATION_REDIRECT
-    value: "https://plattform.ki-marktplatz.com/Group/Welcome/Willkommen"
-  - name: IDM_REGISTRATION_EXTENSION
-    value: "/?new_user=1"
-  - name: IDM_CSP_FORM_ACTION
-    value: "'self',*"
-  #- name: IDM_CSP_FORM_ACTION
-  #  value: "'self',https://marketplace.ai-marketplace.fiware.io,https://daten.ki-marktplatz.com,https://ki-marktplatz.contact-cloud.com,https://con-khi-03w.contact.de"
-  #- name: IDM_OIDC_JWT_ALGORITHM
-  #  value: RS256
+  # -- host where keyrock is available at
+  #host: https://idp.ai-marketplace.fiware.io
+  host: https://login.ki-marktplatz.com
+
+  ## database configuration for keyrock
+  db:
+    ## host of the database to be used
+    host: ai-mysql.ai-marketplace.svc.cluster.local
+    ## user for connecting the database
+    user: root
+    ## password for connecting the database
+    password: Wz17vZHSH2tTelVFZoab
+
+  ## admin configuration for accessing keyrock
+  admin:
+    ## username of the initial keyrock admin
+    user: admin
+    ## password of the initial admin
+    password: 7o!u@Ig)1fDdwBuhY<6K
+    ## email address of the admin user
+    email: dennis.wendland@fiware.org
+
+  ## Certificates configuration
+  certs:
+    ## -- Algorithm to firm ID tokens for OIDC
+    oidcJwtAlgorithm: RS256
+    ## Configuration for PVC mounted at certs/ directory for persistance of HTTPS and application certificates/keys
+    pvc:
+      ## -- Create PVC mounted at certs/ directory for persistance of HTTPS and application certificates/keys
+      enabled: true
+      ## -- Size of the PVC for certs/ directory
+      size: 2Gi
+      
+  ## Theme configuration for Keyrock
+  theme:
+    ## -- Enable theme
+      enabled: true
+      ## -- Name of the theme
+      name: aimarketplace
+      ## -- Size of PVCs to be created
+      size: 1Gi
+      ## Image which holds the theme files
+      image: fiware/keyrock-theme-aimarketplace:0.0.7
+      ## -- specification of the image pull policy
+      imagePullPolicy: Always
+      ## Path to the source theme files inside the container
+      sourceTheme: /themes/aimarketplace
+      ## Path to the source image files inside the container
+      sourceImg: /img/aimarketplace
+      ## Path to the source fonts files inside the container
+      sourceFonts: /fonts/crossten
+      ## Optional: Path to the source favicon directory inside the container
+      sourceFavicon: /favicon
+      ## Mount path for the source theme files
+      mountTheme: /opt/fiware-idm/themes/aimarketplace
+      ## Mount path for the source image files
+      mountImg: /opt/fiware-idm/public/img/aimarketplace
+      ## Mount path for the source fonts files
+      mountFonts: /opt/fiware-idm/public/fonts/crossten
+      ## Mount path for the source favicon
+      mountFavicon: /opt/fiware-idm/public/favicon.ico
+
+  ## a list of additional env vars to be set, check the keyrock docu for all available options
+  ## ref: https://fiware-idm.readthedocs.io/en/latest/installation_and_administration_guide/environment_variables/index.html
+  additionalEnvVars:
+    - name: IDM_TITLE
+      value: AI Marketplace Login
+    - name: IDM_DEBUG
+      value: "true"
+    - name: DEBUG
+      value: "*"
+    - name: IDM_DB_NAME
+      value: idm
+    - name: IDM_DB_SEED
+      value: "true"
+    #- name: IDM_EMAIL_HOST
+    #  value: "mailgun-fiware-io.infra.svc.cluster.local"
+    #- name: IDM_EMAIL_PORT
+    #  value: "25"
+    #- name: IDM_EMAIL_ADDRESS
+    #  value: "idp-ai-marketplace@fiware.io"
+    - name: IDM_EMAIL_HOST
+      value: "smtp-relay.sendinblue.com"
+    - name: IDM_EMAIL_PORT
+      value: "587"
+    - name: IDM_EMAIL_ADDRESS
+      value: "idp@ki-marktplatz.com"
+    - name: IDM_EMAIL_SECURE
+      value: "false"
+    - name: IDM_EMAIL_AUTH_ENABLE
+      value: "true"
+    - name: IDM_EMAIL_AUTH_TYPE
+      value: login
+    - name: IDM_EMAIL_AUTH_USER
+      value: sendinblue@inno-focus.com
+    - name: IDM_EMAIL_AUTH_PASS
+      value: "xsmtpsib-788b184743d347a0d255c1b5c4ed7c95d142e692bf1c83d2ddc07cd4eecddb2f-gU8MwV9p1jGdqXOz"
+    - name: IDM_REGISTRATION_REDIRECT
+      value: "https://plattform.ki-marktplatz.com/Group/Welcome/Willkommen"
+    - name: IDM_REGISTRATION_EXTENSION
+      value: "/?new_user=1"
+    - name: IDM_CSP_FORM_ACTION
+      value: "'self',*"
+    #- name: IDM_CSP_FORM_ACTION
+    #  value: "'self',https://marketplace.ai-marketplace.fiware.io,https://daten.ki-marktplatz.com,https://ki-marktplatz.contact-cloud.com,https://con-khi-03w.contact.de"
+    #- name: IDM_OIDC_JWT_ALGORITHM
+    #  value: RS256
