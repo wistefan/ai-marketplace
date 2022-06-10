@@ -36,9 +36,18 @@ applications:
         route: 
           host: login.ki-marktplatz.fiware.dev
         host: https://login.ki-marktplatz.fiware.dev
+
   - name: mysql
     enabled: true
     source_path: applications/mysql
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+        
+  - name: marketplace
+    enabled: true
+    source_path: applications/marketplace
     source_ref: *branch
     destination: *destination
     helm_values:
