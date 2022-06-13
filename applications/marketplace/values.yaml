@@ -1,15 +1,3 @@
-openshift: 
-  enabled: true
-certificate:
-  enabled: true
-  secretName: bae-tls-secret
-  issuer:
-    kind: ClusterIssuer
-    name: letsencrypt-aws-prod
-  dns:
-    commonName: "*.ki-marktplatz.fiware.dev"
-    name: "*.ki-marktplatz.fiware.dev"
-
 business-api-ecosystem:
   # Values for fiware/business-api-ecosystem Helm Chart
   #
@@ -20,6 +8,8 @@ business-api-ecosystem:
   #   *.apps.fiware.fiware.dev
   #
 
+
+  openshift: true
 
   ## Marketplace OAuth and IdM configuration
   ##
@@ -238,8 +228,11 @@ business-api-ecosystem:
       tls:
         termination: edge
         insecureEdgeTerminationPolicy: Redirect
-      annotations: 
-        cert-utils-operator.redhat-cop.io/certs-from-secret: bae-tls-secret
+   
+      certificate:
+        issuer:
+          kind: ClusterIssuer
+          name: letsencrypt-aws-prod
 
     ## ingress configuration
     ## OpenShift: oc label namespace marketplace ingress=nginx
