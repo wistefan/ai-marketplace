@@ -8,6 +8,9 @@ keyrock:
   #   *.apps.fiware.fiware.dev
   #
 
+  existingSecret: keyrock-secret
+  extraEnvVarsSecret: keyrock-env-secret
+  
   ## deployment specific configuration
   statefulset:
     ## configuration of the image to be used
@@ -54,14 +57,14 @@ keyrock:
     ## user for connecting the database
     user: root
     ## password for connecting the database
-    password: Wz17vZHSH2tTelVFZoab
+    password: dbPassword
 
   ## admin configuration for accessing keyrock
   admin:
     ## username of the initial keyrock admin
     user: admin
     ## password of the initial admin
-    password: 7o!u@Ig)1fDdwBuhY<6K
+    password: ignored
     ## email address of the admin user
     email: dennis.wendland@fiware.org
 
@@ -138,8 +141,6 @@ keyrock:
       value: login
     - name: IDM_EMAIL_AUTH_USER
       value: sendinblue@inno-focus.com
-    - name: IDM_EMAIL_AUTH_PASS
-      value: "xsmtpsib-788b184743d347a0d255c1b5c4ed7c95d142e692bf1c83d2ddc07cd4eecddb2f-gU8MwV9p1jGdqXOz"
     - name: IDM_REGISTRATION_REDIRECT
       value: "https://marketplace.ki-marktplatz.fiware.dev/Group/Welcome/Willkommen"
     - name: IDM_REGISTRATION_EXTENSION

@@ -40,10 +40,9 @@ mongodb:
     ## ref: https://docs.mongodb.com/manual/tutorial/enable-authentication/
     ##
     enabled: true
-    ## MongoDB root password
-    ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#setting-the-root-password-on-first-run
-    ##
-    rootPassword: EN3rpQVSB5d8HOPYvz9w
+
+
+  extraEnvVarsSecret: mongo-users-secret
 
   ## initdb scripts
   ## Specify dictionary of scripts to be run at first boot
@@ -54,7 +53,7 @@ mongodb:
       db.createUser(
       {
         user: "charging",
-        pwd: "1cOX0DkUSZLopOo0u0ld",
+        pwd: process.env.CHARGING_PASSWORD,
         roles: [
           {
             role: "readWrite",
@@ -67,7 +66,7 @@ mongodb:
       db.createUser(
       {
         user: "belp",
-        pwd: "FHrmEApoPMDG6dMIyX5H",
+        pwd: process.env.BELP_PASSWORD,
         roles: [
           {
             role: "readWrite",

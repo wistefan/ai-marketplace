@@ -19,7 +19,7 @@ business-api-ecosystem:
     # OAuth2 Client ID of the BAE applicaiton
     clientId: 71049899-b919-4d0f-9303-e5d2fd1bbb90
     # OAuth2 Client Secret of the BAE application
-    clientSecret: f7e11746-b84f-4748-86e5-107146e537e2
+    clientSecret: oauthSec
     # -- Default role: Role to be used if no role is assigned to user (optional)
     defaultRole: seller
     
@@ -36,7 +36,8 @@ business-api-ecosystem:
     ## Service account
     serviceAccount:
       create: false
-      name: bae-sa
+
+    existingSecret: api-secret
 
     ## Security context
     securityContext:
@@ -53,7 +54,7 @@ business-api-ecosystem:
       ## host of the database to be used
       host: mysql
       ## password for connecting the database
-      password: Wz17vZHSH2tTelVFZoab
+      password: dbPassword
 
 
       
@@ -63,7 +64,8 @@ business-api-ecosystem:
     ## Service account
     serviceAccount:
       create: false
-      name: bae-sa
+
+    existingSecret: rss-secret
 
     ## Security context
     securityContext:
@@ -88,7 +90,7 @@ business-api-ecosystem:
     
     ## port that the RSS container uses
     port: 8080
-    
+  
     ## database configuration for RSS
     db:
       ## host of the database to be used
@@ -96,7 +98,7 @@ business-api-ecosystem:
       ## URL connection string of the database to be used
       url: jdbc:mysql://mysql:3306/RSS
       ## password for connecting the database
-      password: Wz17vZHSH2tTelVFZoab
+      password: dbPassword
 
 
 
@@ -106,7 +108,8 @@ business-api-ecosystem:
     ## Service account
     serviceAccount:
       create: false
-      name: bae-sa
+
+    existingSecret: cb-secret
 
     ## Security context
     securityContext:
@@ -137,7 +140,7 @@ business-api-ecosystem:
       ## -- IDM Admin username
       idmUser: marketplace@ai-marketplace.fiware.io
       ## -- IDM Admin password
-      idmPassword: qfBGKoBtdt1Lav3A3wzO
+      idmPassword: idm
     
     ## port that the charging backend container uses
     port: 8006
@@ -152,7 +155,7 @@ business-api-ecosystem:
       ## Paypal Client-ID
       clientId: ATHrec61cupNwqrSFgARPY5FodDONQgy9P7yenZ7Tnfy34A-av4CpveHdYOJR_lp3GBxAyFZ0T-UuuM5
       ## Paypal Client-Secret
-      clientSecret: EMta9AOG9uq_Z1XHzdjnrLul5DHnYwzeMRANNRrG3vF4UFSOQPgr14tSmS0_h_lZ93TJpFTRCTjr6F3M
+      clientSecret: clientSecret
 
     ## database configuration for Charging backend (MongoDB)
     db:
@@ -163,7 +166,7 @@ business-api-ecosystem:
       ## username for connecting the database
       user: charging
       ## password for connecting the database
-      password: 1cOX0DkUSZLopOo0u0ld
+      password: password
 
     ## -- Configuration for backing up the pvcs of the charging backend into a gcs-bucket
     backup:
@@ -191,7 +194,9 @@ business-api-ecosystem:
     ## Service account
     serviceAccount:
       create: false
-      name: bae-sa
+
+    # references the already deployed secret.
+    existingSecret: belp-secret
 
     ## Security context
     securityContext:
@@ -255,7 +260,8 @@ business-api-ecosystem:
       # username for connecting the database
       user: belp
       # password for connecting the database
-      password: FHrmEApoPMDG6dMIyX5H
+      # ignored if existing secret is set.
+      password: password
 
     ## -- elasticsearch configuration
     elastic:
