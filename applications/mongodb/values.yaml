@@ -54,29 +54,24 @@ mongodb:
       mongo <<EOF
       use admin
       db = db.getSiblingDB('charging_db');
-      db.createUser(
-      {
-        user: "charging",
-        pwd: "$CHARGING_PASSWORD",
-        roles: [
-          {
-            role: "readWrite",
-            db: "charging_db"
-          }
-        ]
+      db.createUser({
+        user: 'charging',
+        pwd: '$CHARGING_PASSWORD',
+        roles: [{
+            role: 'readWrite',
+            db: 'charging_db'
+          }]
       });
       db = db.getSiblingDB('belp_db');
-      db.createUser(
-      {
-        user: "belp",
+      db.createUser({
+        user: 'belp',
         pwd: '$BELP_PASSWORD',
-        roles: [
-          {
-            role: "readWrite",
-            db: "belp_db"
-          }
-        ]
+        roles: [{
+            role: 'readWrite',
+            db: 'belp_db'
+          }]
       });
+      EOF
 
   ## MongoDB pods' Security Context.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
