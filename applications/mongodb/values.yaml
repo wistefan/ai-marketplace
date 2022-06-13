@@ -57,7 +57,7 @@ mongodb:
       db = db.getSiblingDB('charging_db');
       db.createUser({
         user: 'charging',
-        pwd: '$CHARGING_PASSWORD',
+        pwd: $CHARGING_PASSWORD,
         roles: [{
             role: 'readWrite',
             db: 'charging_db'
