@@ -57,7 +57,7 @@ mongodb:
       db.createUser(
       {
         user: "charging",
-        pwd: $CHARGING_PASSWORD,
+        pwd: '$CHARGING_PASSWORD',
         roles: [
           {
             role: "readWrite",
@@ -69,7 +69,7 @@ mongodb:
       db.createUser(
       {
         user: "belp",
-        pwd: $BELP_PASSWORD,
+        pwd: '$BELP_PASSWORD',
         roles: [
           {
             role: "readWrite",
