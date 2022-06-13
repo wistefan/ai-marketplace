@@ -270,7 +270,7 @@ business-api-ecosystem:
       ## -- indexing engine of logic proxy
       engine: elasticsearch
       ## -- URL of elasticsearch service
-      url: elasticsearch-master
+      url: elasticsearch-master:9200
       ## -- API version of elasticsearch
       version: 7.5
 
