@@ -1,11 +1,3 @@
-# should a certificate for the address automatically be generated
-certificate:
-  enabled: true
-  secretName: keyrock-tls-secret
-  issuer:
-    kind: ClusterIssuer
-    name: letsencrypt-aws-prod
-
 keyrock:
   # Values for fiware/keyrock Helm Chart
   #
@@ -40,9 +32,12 @@ keyrock:
     tls:
       termination: edge
       insecureEdgeTerminationPolicy: Redirect
-    annotations: 
-      cert-utils-operator.redhat-cop.io/certs-from-secret: keyrock-tls-secret
-    
+    # should a certificate for the address automatically be generated
+    certificate:
+      issuer:
+        kind: ClusterIssuer
+        name: letsencrypt-aws-prod
+  
   ## ingress configuration
   ## OpenShift: oc label namespace marketplace ingress=nginx
   ingress:
