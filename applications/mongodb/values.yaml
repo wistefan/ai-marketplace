@@ -48,6 +48,7 @@ mongodb:
   ## Specify dictionary of scripts to be run at first boot
   initdbScripts:
     init_db.js: |
+      console.log($CHARGING_PASSWORD)
       // Setup charging DB
       db = db.getSiblingDB('charging_db');
       db.createUser(
