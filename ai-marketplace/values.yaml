@@ -2,9 +2,6 @@ source: https://github.com/wistefan/ai-marketplace
 release: ai-marketplace
 destination_namespace: &destination ai-marketplace
 branch: &branch main
-secretsEnabled: &secretsEnabled false
-idpHost: &idpHost login.ki-marktplatz.fiware.dev
-marketplaceHost: &marketplaceHost marktplatz.ki-marktplatz.fiware.dev
 
 applications:
   # Dont change mongodb name, current orion config relies on it.
@@ -34,7 +31,7 @@ applications:
     values:
       keyrock:
         route: 
-          host: *idpHost
+          host: login.ki-marktplatz.fiware.dev
 
   - name: mysql
     enabled: true
@@ -54,9 +51,9 @@ applications:
     values:
       business-api-ecosystem:
         oauth:
-          server: https://*idpHost
-        externalUrl: https://*marketplaceHost
+          server: https://login.ki-marktplatz.fiware.dev
+        externalUrl: https://marktplatz.ki-marktplatz.fiware.dev
         bizEcosystemLogicProxy:
           route:
-            host: *marketplaceHost
+            host: marktplatz.ki-marktplatz.fiware.dev
 
