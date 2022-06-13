@@ -8,7 +8,6 @@ business-api-ecosystem:
   #   *.apps.fiware.fiware.dev
   #
 
-
   openshift: true
 
   ## Marketplace OAuth and IdM configuration

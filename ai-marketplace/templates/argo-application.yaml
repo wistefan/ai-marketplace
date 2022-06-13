@@ -1,8 +1,6 @@
 {{- if .Values.applications }}
 {{- $release := .Values.release }}
 {{- $source := .Values.source }}
-{{- $host := .Values.host }}
-{{- $tlsSecret := .Values.tlsSecret }}
 {{- range $app := .Values.applications }}
 {{- if $app.source }}
 {{- $source = $app.source }}
@@ -42,26 +40,9 @@ spec:
       valueFiles:
 {{- toYaml .helm_values | nindent 8 }}
 {{- end }}
-{{- if or (.values) ($host) ($tlsSecret) (.overwriteHost) (.overwriteSecret) }}
+{{- if (.values) }}
       values: |
-{{- if or ($host) ($tlsSecret) (.overwriteHost) (.overwriteSecret) }}
-        route:
-{{- if .overwriteSecret }}
-          annotations: 
-            cert-utils-operator.redhat-cop.io/certs-from-secret: {{ .overwriteSecret }}
-{{- else if ($tlsSecret) }}      
-          annotations: 
-            cert-utils-operator.redhat-cop.io/certs-from-secret: {{ $tlsSecret }}
-{{- end }}
-{{- if .overwriteHost }}
-          host: {{ .overwriteHost }}
-{{- else if ($host) }}      
-          host: {{ .name }}.{{ $host }}
-{{- end }}
-{{- end }}
-{{- if (.values) }}      
 {{- toYaml .values | nindent 8 }}
-{{- end }}
 {{- end }}
 {{- if or .releaseName .name }}
       releaseName: {{ .releaseName | default .name }}
