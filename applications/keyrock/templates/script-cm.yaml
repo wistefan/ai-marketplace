@@ -1,0 +1,18 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: marketplace-app-create-cm
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+    "helm.sh/hook-weight": "1"
+data:
+  create.sh: |-
+    curl --include \
+     --request POST \
+     --header "Content-Type: application/json" \
+     --data-binary "{
+      \"name\": \"$ADMIN_USER\",
+      \"password\": \"$ADMIN_PASSWORD\"
+    }" \
+    'http://keyrock/v1/auth/tokens'
