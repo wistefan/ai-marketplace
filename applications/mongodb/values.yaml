@@ -46,8 +46,9 @@ mongodb:
   ## initdb scripts
   ## Specify dictionary of scripts to be run at first boot
   initdbScripts:
-    init_db.js: |
-    
+    init_db.sh: |
+      set -e
+      mongo <<EOF
       db = db.getSiblingDB('charging_db');
       db.createUser({
         user: 'charging',
@@ -66,6 +67,7 @@ mongodb:
             db: 'belp_db'
           }]
       });
+      EOF
 
   ## MongoDB pods' Security Context.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
