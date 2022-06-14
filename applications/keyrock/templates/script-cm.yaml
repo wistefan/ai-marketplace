@@ -12,7 +12,7 @@ data:
       --header 'X-Auth-token: ${token}' \
       --header 'Content-Type: application/json' \
       --data-raw '{
-        "name": "${{ .Values.keyrock.admin.email}}",
+        "name": "${{ .Values.keyrock.admin.email }}",
         "password": "$ADMIN_PASSWORD"
     }'  | awk 'BEGIN {FS=": "}/^x-subject-token/{print $2}' | sed -e 's/\r//')
 
