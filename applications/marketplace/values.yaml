@@ -172,21 +172,6 @@ business-api-ecosystem:
     backup:
       ## -- should the backup for file data be enabled
       enabled: false
-      ## -- configuration of the image to be used
-      #image:
-      #  repository: fiware/copy-to-gcs
-      #  tag: 0.0.3
-      #  pullPolicy: Always
-      ## -- prefix to be used for the backup files
-      filePrefix: "charging-ai-marketplace"
-      ## -- name of the bucket to be used for backup
-      bucketName: "gs://fiware-k8s-backups/ai-marketplace"
-      ## -- cron schedule for the backup to be executed
-      schedule: "0  */6  *  *  *"
-      ## -- name of the secret containing the service account to be used for accessing the bucket. The account should be provided in json format and have write permission on the referenced schema
-      secretName: "mongodb-gcs-backup"
-
-
 
   ## Configuration for biz-ecosystem-logic-proxy component
   ##
@@ -259,10 +244,7 @@ business-api-ecosystem:
       database: belp_db
       # username for connecting the database
       user: belp
-      # password for connecting the database
-      # ignored if existing secret is set.
-      password: password
-
+      
     ## -- elasticsearch configuration
     elastic:
       ## -- indexing engine of logic proxy
