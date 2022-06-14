@@ -43,6 +43,8 @@ data:
           ]
         }
       }'
+    echo TOKEN ${token}
+
     appid=$(curl --location --request POST 'http://keyrock:8080/v1/applications' \
       --header 'X-Auth-token: ${token}' \
       --header 'Content-Type: application/json' \
