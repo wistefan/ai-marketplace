@@ -52,8 +52,9 @@ mongodb:
       echo $MONGODB_ROOT_USER
       echo $MONGODB_ROOT_PASSWORD
       mongo <<EOF
-      db = db.getSiblingDB('charging_db');
+      use admin
       db.auth('$MONGODB_ROOT_USER', '$MONGODB_ROOT_PASSWORD')
+      db = db.getSiblingDB('charging_db');
       db.createUser({
         user: 'charging',
         pwd: '$CHARGING_PASSWORD',
