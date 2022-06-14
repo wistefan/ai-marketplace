@@ -48,7 +48,7 @@ mongodb:
   initdbScripts:
     init_db.sh: |
       set -e
-      mongo <<EOF
+      mongo admin -u $MONGODB_ROOT_USER -p '$MONGODB_ROOT_PASSWORD' <<EOF
       db = db.getSiblingDB('charging_db');
       db.createUser({
         user: 'charging',
