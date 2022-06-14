@@ -9,6 +9,9 @@ metadata:
 data:
   create.sh: |-
 
+    echo ++++++++ GET TOKEN 
+    echo '{ "name": {{ .Values.keyrock.admin.email | quote }},  "password": "'${ADMIN_PASSWORD}'" }'
+
     token=$(curl -iL --request POST 'http://keyrock:8080/v1/auth/tokens' \
       --header 'Content-Type: application/json' \
       --data-raw '{
@@ -16,14 +19,15 @@ data:
             "password": "'${ADMIN_PASSWORD}'"
         }'  | awk 'BEGIN {FS=": "}/^x-subject-token/{print $2}' | sed -e 's/\r//')
   
-    echo ++++++++GOT TOKEN ${token}
+    echo ++++++++CHECK APP EXISTS
 
     applicationList=$(curl --location --request GET 'http://keyrock:8080/v1/applications' \
       --header 'X-Auth-token: ${token}')
     if [[ "$applicationList" == *"\"name\":\"Marketplace\""* ]]; then
       exit 0
     fi 
-    echo ++++++++NO APP YET
+
+    echo ++++++++CREATE APP
 
     appid=$(curl --location --request POST 'http://keyrock:8080/v1/applications' \
       --header 'X-Auth-token: ${token}' \
@@ -41,8 +45,7 @@ data:
         }
       }' | jq .application.id | sed -e 's/"//' | sed -e 's/"//') 
 
-
-    echo ++++++++CREATED APP ${appid}
+    echo ++++++++CREATE ROLE admin
 
     curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
       --header 'X-Auth-token: ${token}' \
@@ -52,6 +55,8 @@ data:
               "name": "admin"
           }
       }'
+      
+    echo ++++++++CREATE ROLE orgAdmin
 
     curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
       --header 'X-Auth-token: ${token}' \
@@ -62,6 +67,8 @@ data:
           }
       }'
 
+    echo ++++++++CREATE ROLE seller
+
     curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
       --header 'X-Auth-token: ${token}' \
       --header 'Content-Type: application/json' \
@@ -71,6 +78,8 @@ data:
           }
       }'
 
+    echo ++++++++CREATE ROLE customer
+    
     curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
       --header 'X-Auth-token: ${token}' \
       --header 'Content-Type: application/json' \
@@ -79,5 +88,3 @@ data:
               "name": "customer"
           }
       }'
-
-      echo ++++++++++++ROLES CREATED
