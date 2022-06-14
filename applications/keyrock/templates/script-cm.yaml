@@ -12,20 +12,20 @@ data:
       --header 'X-Auth-token: ${token}' \
       --header 'Content-Type: application/json' \
       --data-raw '{
-        "name": "dennis.wendland@fiware.org",
-        "password": "Wz17vZHSH2tTelVFZoab"
+        "name": "${{ .Values.keyrock.admin.email}}",
+        "password": "$ADMIN_PASSWORD"
     }'  | awk 'BEGIN {FS=": "}/^x-subject-token/{print $2}' | sed -e 's/\r//')
 
-    # check if app already exists
+    echo ++++++++GOT TOKEN
     applicationList=$(curl --location --request GET 'http://keyrock:8080/v1/applications' \
-      --header 'X-Auth-token: ${token}')
+      --header 'X-Auth-token: $token')
     if [[ "$applicationList" == *"\"name\":\"Marketplace\""* ]]; then
-      exit 1
+      exit 0
     fi 
-
+    echo ++++++++NO APP YET
 
     appid=$(curl --location --request POST 'http://keyrock:8080/v1/applications' \
-      --header 'X-Auth-token: ${token}' \
+      --header 'X-Auth-token: $token' \
       --header 'Content-Type: application/json' \
       --data-raw '{
         "application": {
@@ -40,8 +40,11 @@ data:
         }
       }' | jq .application.id | sed -e 's/"//' | sed -e 's/"//') 
 
-    curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
-      --header 'X-Auth-token: ${token}' \
+
+    echo ++++++++CREATED APP $appid
+
+    curl --location --request POST 'http://keyrock:8080/v1/applications/$appid/roles' \
+      --header 'X-Auth-token: $token' \
       --header 'Content-Type: application/json' \
       --data-raw '{
           "role": {
@@ -49,8 +52,8 @@ data:
           }
       }'
 
-    curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
-      --header 'X-Auth-token: ${token}' \
+    curl --location --request POST 'http://keyrock:8080/v1/applications/$appid/roles' \
+      --header 'X-Auth-token: $token' \
       --header 'Content-Type: application/json' \
       --data-raw '{
           "role": {
@@ -58,8 +61,8 @@ data:
           }
       }'
 
-    curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
-      --header 'X-Auth-token: ${token}' \
+    curl --location --request POST 'http://keyrock:8080/v1/applications/$appid/roles' \
+      --header 'X-Auth-token: $token' \
       --header 'Content-Type: application/json' \
       --data-raw '{
           "role": {
@@ -67,11 +70,13 @@ data:
           }
       }'
 
-    curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
-      --header 'X-Auth-token: ${token}' \
+    curl --location --request POST 'http://keyrock:8080/v1/applications/$appid/roles' \
+      --header 'X-Auth-token: $token' \
       --header 'Content-Type: application/json' \
       --data-raw '{
           "role": {
               "name": "customer"
           }
       }'
+
+      echo ++++++++++++ROLES CREATED

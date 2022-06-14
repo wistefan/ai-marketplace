@@ -16,6 +16,12 @@ spec:
       volumeMounts:
         - name: scripts
           mountPath: /scripts
+      env:
+        - name: ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: keyrock-secret
+              key: adminPassword
   volumes:
     - name: scripts
       configMap:
