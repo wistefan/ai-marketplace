@@ -15,4 +15,4 @@ data:
       \"name\": \"$ADMIN_USER\",
       \"password\": \"$ADMIN_PASSWORD\"
     }" \
-    'http://keyrock/v1/auth/tokens'
+    'http://keyrock:8080/v1/auth/tokens'
