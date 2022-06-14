@@ -51,7 +51,7 @@ mongodb:
     init_db.sh: |
       set -e
 
-      echo "$CHRGING_PASSWORD"
+      echo "$CHARGING_PASSWORD"
       mongo <<EOF
       use admin
       db = db.getSiblingDB('charging_db');
