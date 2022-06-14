@@ -40,9 +40,9 @@ mongodb:
     ## ref: https://docs.mongodb.com/manual/tutorial/enable-authentication/
     ##
     enabled: true
-    rootPassword: test
-    
+
   extraEnvVarsSecret: mongo-users-secret
+  existingSecret: mongo-root-secret
 
   ## initdb scripts
   ## Specify dictionary of scripts to be run at first boot
