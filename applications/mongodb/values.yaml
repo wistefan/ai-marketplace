@@ -40,7 +40,6 @@ mongodb:
     ## ref: https://docs.mongodb.com/manual/tutorial/enable-authentication/
     ##
     enabled: true
-    rootPassword: test
 
 
   extraEnvVarsSecret: mongo-users-secret
@@ -48,11 +47,8 @@ mongodb:
   ## initdb scripts
   ## Specify dictionary of scripts to be run at first boot
   initdbScripts:
-    init_db.sh: |
-      set -e
-
-      mongo <<EOF
-      
+    init_db.js: |
+    
       db = db.getSiblingDB('charging_db');
       db.createUser({
         user: 'charging',
@@ -71,7 +67,6 @@ mongodb:
             db: 'belp_db'
           }]
       });
-      EOF
 
   ## MongoDB pods' Security Context.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
