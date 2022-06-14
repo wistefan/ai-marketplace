@@ -8,11 +8,70 @@ metadata:
     "helm.sh/hook-weight": "1"
 data:
   create.sh: |-
-    curl --include \
-     --request POST \
-     --header "Content-Type: application/json" \
-     --data-binary "{
-      \"name\": \"$ADMIN_USER\",
-      \"password\": \"$ADMIN_PASSWORD\"
-    }" \
-    'http://keyrock:8080/v1/auth/tokens'
+    token=$(curl -iL --request POST 'http://keyrock:8080/v1/auth/tokens' \
+      --header 'X-Auth-token: ${token}' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+        "name": "dennis.wendland@fiware.org",
+        "password": "Wz17vZHSH2tTelVFZoab"
+    }'  | awk 'BEGIN {FS=": "}/^x-subject-token/{print $2}' | sed -e 's/\r//')
+
+    # check if app already exists
+    applicationList=$(curl --location --request GET 'https://keyrock:8080/v1/applications' \
+      --header 'X-Auth-token: ${token}')
+    if [[ "$applicationList" == *"\"name\":\"Marketplace\""* ]]; then
+      exit 0
+    fi 
+
+
+    appid=$(curl --location --request POST 'https://keyrock:8080/v1/applications' \
+      --header 'X-Auth-token: ${token}' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+        "application": {
+          "name": "Marketplace",
+          "description": "Keyrock client for the marketplace."
+          "redirect_uri": "http://marktplatz.ki-marktplatz.fiware.dev/auth/fiware/callback",
+          "url": "http://marktplatz.ki-marktplatz.fiware.dev",
+          "grant_type": [
+            "authorization_code",
+            "refresh_token"
+          ]
+        }
+      }' | jq .application.id | sed -e 's/"//' | sed -e 's/"//') 
+
+    curl --location --request POST 'https://keyrock:8080/v1/applications/${appid}/roles' \
+      --header 'X-Auth-token: ${token}' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+          "role": {
+              "name": "admin"
+          }
+      }'
+
+    curl --location --request POST 'https://keyrock:8080/v1/applications/${appid}/roles' \
+      --header 'X-Auth-token: ${token}' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+          "role": {
+              "name": "orgAdmin"
+          }
+      }'
+
+    curl --location --request POST 'https://keyrock:8080/v1/applications/${appid}/roles' \
+      --header 'X-Auth-token: ${token}' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+          "role": {
+              "name": "seller"
+          }
+      }'
+
+    curl --location --request POST 'https://keyrock:8080/v1/applications/${appid}/roles' \
+      --header 'X-Auth-token: ${token}' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+          "role": {
+              "name": "customer"
+          }
+      }'
