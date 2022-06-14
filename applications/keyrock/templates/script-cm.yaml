@@ -8,19 +8,19 @@ metadata:
     "helm.sh/hook-weight": "1"
 data:
   create.sh: |-
-    echo Email ${{ .Values.keyrock.admin.email }}
+    echo Email ${{ .Values.keyrock.admin.email | quote }}
     echo Password $ADMIN_PASSWORD
 
     token=$(curl -iL --request POST 'http://keyrock:8080/v1/auth/tokens' \
       --header 'Content-Type: application/json' \
       --data-raw '{
-        "name": "${{ .Values.keyrock.admin.email }}",
+        "name": ${{ .Values.keyrock.admin.email | quote }},
         "password": "${ADMIN_PASSWORD}"
     }'  | awk 'BEGIN {FS=": "}/^x-subject-token/{print $2}' | sed -e 's/\r//')
     curl -iL --request POST 'http://keyrock:8080/v1/auth/tokens' \
       --header 'Content-Type: application/json' \
       --data-raw '{
-        "name": "${{ .Values.keyrock.admin.email }}",
+        "name": ${{ .Values.keyrock.admin.email | quote }},
         "password": "${ADMIN_PASSWORD}"
       }'
 
