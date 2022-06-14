@@ -17,14 +17,14 @@ data:
     }'  | awk 'BEGIN {FS=": "}/^x-subject-token/{print $2}' | sed -e 's/\r//')
 
     # check if app already exists
-    applicationList=$(curl --location --request GET 'https://keyrock:8080/v1/applications' \
+    applicationList=$(curl --location --request GET 'http://keyrock:8080/v1/applications' \
       --header 'X-Auth-token: ${token}')
     if [[ "$applicationList" == *"\"name\":\"Marketplace\""* ]]; then
       exit 0
     fi 
 
 
-    appid=$(curl --location --request POST 'https://keyrock:8080/v1/applications' \
+    appid=$(curl --location --request POST 'http://keyrock:8080/v1/applications' \
       --header 'X-Auth-token: ${token}' \
       --header 'Content-Type: application/json' \
       --data-raw '{
@@ -40,7 +40,7 @@ data:
         }
       }' | jq .application.id | sed -e 's/"//' | sed -e 's/"//') 
 
-    curl --location --request POST 'https://keyrock:8080/v1/applications/${appid}/roles' \
+    curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
       --header 'X-Auth-token: ${token}' \
       --header 'Content-Type: application/json' \
       --data-raw '{
@@ -49,7 +49,7 @@ data:
           }
       }'
 
-    curl --location --request POST 'https://keyrock:8080/v1/applications/${appid}/roles' \
+    curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
       --header 'X-Auth-token: ${token}' \
       --header 'Content-Type: application/json' \
       --data-raw '{
@@ -58,7 +58,7 @@ data:
           }
       }'
 
-    curl --location --request POST 'https://keyrock:8080/v1/applications/${appid}/roles' \
+    curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
       --header 'X-Auth-token: ${token}' \
       --header 'Content-Type: application/json' \
       --data-raw '{
@@ -67,7 +67,7 @@ data:
           }
       }'
 
-    curl --location --request POST 'https://keyrock:8080/v1/applications/${appid}/roles' \
+    curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
       --header 'X-Auth-token: ${token}' \
       --header 'Content-Type: application/json' \
       --data-raw '{
