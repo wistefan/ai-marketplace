@@ -6,4 +6,18 @@ metadata:
     "helm.sh/hook": post-upgrade
     "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
     "helm.sh/hook-weight": "1"
-  
+spec:
+  containers:
+    - name: app-create
+      image: quay.io/opencloudio/curl:4.2.0-build.8
+      command: 
+          - /bin/sh
+          - /scripts/create.sh
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+  volumes:
+    - name: scripts
+      configMap:
+        name: marketplace-app-create-cm
+  restartPolicy: Never
