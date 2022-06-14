@@ -30,7 +30,7 @@ data:
     echo ++++++++CREATE APP
 
     appid=$(curl --location --request POST 'http://keyrock:8080/v1/applications' \
-      --header 'X-Auth-token: ${token}' \
+      --header 'X-Auth-token: '${token}'' \
       --header 'Content-Type: application/json' \
       --data-raw '{
         "application": {
