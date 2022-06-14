@@ -20,7 +20,7 @@ data:
     applicationList=$(curl --location --request GET 'http://keyrock:8080/v1/applications' \
       --header 'X-Auth-token: ${token}')
     if [[ "$applicationList" == *"\"name\":\"Marketplace\""* ]]; then
-      exit 0
+      exit 1
     fi 
 
 
