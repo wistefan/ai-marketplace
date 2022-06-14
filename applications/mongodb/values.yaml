@@ -40,6 +40,8 @@ mongodb:
     ## ref: https://docs.mongodb.com/manual/tutorial/enable-authentication/
     ##
     enabled: true
+    rootPassword: EN3rpQVSB5d8HOPYvz9w
+
 
 
   extraEnvVarsSecret: mongo-users-secret
