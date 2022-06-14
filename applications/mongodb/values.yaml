@@ -52,7 +52,7 @@ mongodb:
       set -e
 
       mongo <<EOF
-      use admin
+      
       db = db.getSiblingDB('charging_db');
       db.createUser({
         user: 'charging',
