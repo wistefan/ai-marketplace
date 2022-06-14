@@ -1,20 +1,11 @@
 business-api-ecosystem:
-  # Values for fiware/business-api-ecosystem Helm Chart
-  #
-  # Chart values file:
-  # ref: 
-  #
-  # Deployment on FIWARE OpenShift Cluster
-  #   *.apps.fiware.fiware.dev
-  #
-
+  # is the target environment openshift?
   openshift: true
 
   ## Marketplace OAuth and IdM configuration
   ##
   oauth:
     # URL of the FIWARE IDM used for user authentication
-    #server: https://idp.ai-marketplace.fiware.io
     server: https://login.ki-marktplatz.fiware.dev
     # OAuth2 Client ID of the BAE applicaiton
     clientId: 71049899-b919-4d0f-9303-e5d2fd1bbb90
@@ -27,7 +18,6 @@ business-api-ecosystem:
   ## External URL used to access the BAE frontend (logic proxy)
   ## Should match the host of the Ingress or Route of the Logic Proxy
   ##
-  #externalUrl: https://marketplace.ai-marketplace.fiware.io
   externalUrl: https://marketplace.ki-marktplatz.fiware.dev
 
   ## Configuration for biz-ecosystem-apis component
@@ -97,8 +87,6 @@ business-api-ecosystem:
       host: mysql
       ## URL connection string of the database to be used
       url: jdbc:mysql://mysql:3306/RSS
-      ## password for connecting the database
-      password: dbPassword
 
 
 
@@ -139,8 +127,6 @@ business-api-ecosystem:
         helm.sh/resource-policy: "keep"
       ## -- IDM Admin username
       idmUser: marketplace@ai-marketplace.fiware.io
-      ## -- IDM Admin password
-      idmPassword: idm
     
     ## port that the charging backend container uses
     port: 8006
@@ -154,8 +140,6 @@ business-api-ecosystem:
     paypal:
       ## Paypal Client-ID
       clientId: ATHrec61cupNwqrSFgARPY5FodDONQgy9P7yenZ7Tnfy34A-av4CpveHdYOJR_lp3GBxAyFZ0T-UuuM5
-      ## Paypal Client-Secret
-      clientSecret: clientSecret
 
     ## database configuration for Charging backend (MongoDB)
     db:
@@ -165,8 +149,6 @@ business-api-ecosystem:
       database: charging_db
       ## username for connecting the database
       user: charging
-      ## password for connecting the database
-      password: password
 
     ## -- Configuration for backing up the pvcs of the charging backend into a gcs-bucket
     backup:
@@ -202,7 +184,6 @@ business-api-ecosystem:
         tag: v8.1.0-rc6
         ## -- specification of the image pull policy
         pullPolicy: Always
-        #pullPolicy: IfNotPresent
     
     ## openshift specific route definition. Will not work on plain k8s
     route:
@@ -217,7 +198,7 @@ business-api-ecosystem:
       tls:
         termination: edge
         insecureEdgeTerminationPolicy: Redirect
-   
+      # use the certificate issuer for letsencrypt with route53 dns-challenge
       certificate:
         issuer:
           kind: ClusterIssuer
@@ -244,7 +225,7 @@ business-api-ecosystem:
       database: belp_db
       # username for connecting the database
       user: belp
-      
+
     ## -- elasticsearch configuration
     elastic:
       ## -- indexing engine of logic proxy
