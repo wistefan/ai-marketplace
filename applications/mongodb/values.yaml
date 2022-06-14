@@ -48,8 +48,12 @@ mongodb:
   initdbScripts:
     init_db.sh: |
       set -e
-      mongo -u $MONGODB_ROOT_USER -p '$MONGODB_ROOT_PASSWORD' <<EOF
+
+      echo $MONGODB_ROOT_USER
+      echo $MONGODB_ROOT_PASSWORD
+      mongo <<EOF
       db = db.getSiblingDB('charging_db');
+      db.auth('$MONGODB_ROOT_USER', '$MONGODB_ROOT_PASSWORD')
       db.createUser({
         user: 'charging',
         pwd: '$CHARGING_PASSWORD',
@@ -59,6 +63,7 @@ mongodb:
           }]
       });
       db = db.getSiblingDB('belp_db');
+      db.auth('$MONGODB_ROOT_USER', '$MONGODB_ROOT_PASSWORD')
       db.createUser({
         user: 'belp',
         pwd: '$BELP_PASSWORD',
