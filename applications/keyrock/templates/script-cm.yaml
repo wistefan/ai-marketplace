@@ -19,14 +19,14 @@ data:
             "password": "'${ADMIN_PASSWORD}'"
         }'  | awk 'BEGIN {FS=": "}/^x-subject-token/{print $2}' | sed -e 's/\r//')
   
-    echo ++++++++CHECK APP EXISTS
+    echo ++++++++CHECK APP EXISTS - Token: $token
     curl -iL --request POST 'http://keyrock:8080/v1/auth/tokens' \
       --header 'Content-Type: application/json' \
       --data-raw '{
             "name": {{ .Values.keyrock.admin.email | quote }},
             "password": "'${ADMIN_PASSWORD}'"
-        }'  | awk 'BEGIN {FS=": "}/^x-subject-token/{print $2}' | sed -e 's/\r//'
-
+        }'
+        
     applicationList=$(curl --location --request GET 'http://keyrock:8080/v1/applications' \
       --header 'X-Auth-token: ${token}')
     if [[ "$applicationList" == *"\"name\":\"Marketplace\""* ]]; then
