@@ -9,7 +9,7 @@ metadata:
 spec:
   containers:
     - name: app-create
-      image: mysql/5.7
+      image: mysql:5.7
       command: 
         - /bin/sh
         - /scripts/create.sh
