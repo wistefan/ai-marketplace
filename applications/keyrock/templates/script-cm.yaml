@@ -11,12 +11,12 @@ data:
 
     mysql -h {{ .Values.keyrock.db.host }} -u {{ .Values.keyrock.db.user }} -p$DB_PASSWORD idm <<EOF
 
-    INSERT INTO oauth_client (id,name,description,secret,url,redirect_uri,image,grant_type,response_type,token_types) VALUES ({{ .Values.marketplace.id | quote }},{{ .Values.marketplace.name | quote }},{{ .Values.marketplace.description | quote }}, "$APP_SECRET",{{ .Values.marketplace.url | quote }},{{ .Values.marketplace.redirectUrl | quote }},default,{{ .Values.marketplace.grantType | quote }},{{ .Values.marketplace.responseType | quote }},{{ .Values.marketplace.tokenTypes | quote }});
+    INSERT INTO oauth_client (id,name,description,secret,url,redirect_uri,image,grant_type,response_type,token_types) VALUES ({{ .Values.marketplace.id | quote }},{{ .Values.marketplace.name | quote }},{{ .Values.marketplace.description | quote }}, "$APP_SECRET",{{ .Values.marketplace.url | quote }},{{ .Values.marketplace.redirectUrl | quote }},default,{{ .Values.marketplace.grantType | quote }},{{ .Values.marketplace.responseType | quote }},{{ .Values.marketplace.tokenTypes | quote }}) ON DUPLICATE KEY UPDATE name=name;
     
-    INSERT INTO role (name,oauth_client_id) VALUES ("admin",{{ .Values.marketplace.id | quote }});
-    INSERT INTO role (name,oauth_client_id) VALUES ("customer",{{ .Values.marketplace.id | quote }});
-    INSERT INTO role (name,oauth_client_id) VALUES ("orgAdmin",{{ .Values.marketplace.id | quote }});
-    INSERT INTO role (name,oauth_client_id) VALUES ("seller",{{ .Values.marketplace.id | quote }});
+    INSERT INTO role (name,oauth_client_id) VALUES ("admin",{{ .Values.marketplace.id | quote }}) ON DUPLICATE KEY UPDATE name=name;
+    INSERT INTO role (name,oauth_client_id) VALUES ("customer",{{ .Values.marketplace.id | quote }}) ON DUPLICATE KEY UPDATE name=name;
+    INSERT INTO role (name,oauth_client_id) VALUES ("orgAdmin",{{ .Values.marketplace.id | quote }}) ON DUPLICATE KEY UPDATE name=name;
+    INSERT INTO role (name,oauth_client_id) VALUES ("seller",{{ .Values.marketplace.id | quote }}) ON DUPLICATE KEY UPDATE name=name;
 
     COMMIT;
     EOF
