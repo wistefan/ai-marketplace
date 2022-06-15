@@ -22,7 +22,7 @@ data:
     echo ++++++++CHECK APP EXISTS - Token: $token
     
     applicationList=$(curl --location --request GET 'http://keyrock:8080/v1/applications' \
-      --header 'X-Auth-token: '{$token}'')
+      --header "X-Auth-token: $token")
     if [[ "$applicationList" == *"\"name\":\"Marketplace\""* ]]; then
       exit 0
     fi 
@@ -30,7 +30,7 @@ data:
     echo ++++++++CREATE APP      
 
     curl --location --request POST 'http://keyrock:8080/v1/applications' \
-      --header "X-Auth-token: '{$token}'" \
+      --header "X-Auth-token: $token" \
       --header 'Content-Type: application/json' \
       --data-raw '{
         "application": {
@@ -46,7 +46,7 @@ data:
       }'
 
     appid=$(curl --location --request POST 'http://keyrock:8080/v1/applications' \
-      --header 'X-Auth-token: ${token}' \
+      --header "X-Auth-token: $token" \
       --header 'Content-Type: application/json' \
       --data-raw '{
         "application": {
@@ -64,7 +64,7 @@ data:
     echo ++++++++CREATE ROLE admin
 
     curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
-      --header 'X-Auth-token: ${token}' \
+      --header "X-Auth-token: $token" \
       --header 'Content-Type: application/json' \
       --data-raw '{
           "role": {
@@ -75,7 +75,7 @@ data:
     echo ++++++++CREATE ROLE orgAdmin
 
     curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
-      --header 'X-Auth-token: ${token}' \
+      --header "X-Auth-token: $token" \
       --header 'Content-Type: application/json' \
       --data-raw '{
           "role": {
@@ -86,7 +86,7 @@ data:
     echo ++++++++CREATE ROLE seller
 
     curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
-      --header 'X-Auth-token: ${token}' \
+      --header "X-Auth-token: $token" \
       --header 'Content-Type: application/json' \
       --data-raw '{
           "role": {
@@ -97,7 +97,7 @@ data:
     echo ++++++++CREATE ROLE customer
     
     curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
-      --header 'X-Auth-token: ${token}' \
+      --header "X-Auth-token: $token" \
       --header 'Content-Type: application/json' \
       --data-raw '{
           "role": {
