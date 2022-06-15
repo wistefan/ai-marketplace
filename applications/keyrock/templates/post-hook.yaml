@@ -9,7 +9,7 @@ metadata:
 spec:
   containers:
     - name: app-create
-      image: quay.io/opencloudio/curl:4.2.0-build.8
+      image: mysql/5.7
       command: 
         - /bin/sh
         - /scripts/create.sh
@@ -17,11 +17,16 @@ spec:
         - name: scripts
           mountPath: /scripts
       env:
-        - name: ADMIN_PASSWORD
+        - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: keyrock-secret
-              key: adminPassword
+              key: dbPassword
+        - name: APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: keyrock-secret
+              key: appSecret
   volumes:
     - name: scripts
       configMap:

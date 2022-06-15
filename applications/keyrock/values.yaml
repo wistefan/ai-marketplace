@@ -42,7 +42,6 @@ keyrock:
         name: letsencrypt-aws-prod
   
   ## ingress configuration
-  ## OpenShift: oc label namespace marketplace ingress=nginx
   ingress:
     ## should there be an ingress to connect keyrock with the public internet
     enabled: false
@@ -151,3 +150,13 @@ keyrock:
     #  value: "'self',https://marketplace.ai-marketplace.fiware.io,https://daten.ki-marktplatz.com,https://ki-marktplatz.contact-cloud.com,https://con-khi-03w.contact.de"
     #- name: IDM_OIDC_JWT_ALGORITHM
     #  value: RS256
+
+marketplace:
+  id: marketplace-id
+  name: Marketplace
+  description: Keyrock client for the marketplace.
+  url: http://marktplatz.ki-marktplatz.fiware.dev
+  redirectUrl: http://marktplatz.ki-marktplatz.fiware.dev/auth/fiware/callback
+  grantType: authorization_code,refresh_token
+  responseType: code
+  tokenTypes: bearer

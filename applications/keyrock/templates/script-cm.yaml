@@ -9,82 +9,14 @@ metadata:
 data:
   create.sh: |-
 
-    echo ++++++++ GET TOKEN 
-    echo '{ "name": {{ .Values.keyrock.admin.email | quote }},  "password": "'${ADMIN_PASSWORD}'" }'
+    mysql -u {{ .Values.keyrock.db.user }} -p$DB_PASSWORD  <<EOF
 
-    token=$(curl -iL --request POST 'http://keyrock:8080/v1/auth/tokens' \
-      --header 'Content-Type: application/json' \
-      --data-raw '{
-            "name": {{ .Values.keyrock.admin.email | quote }},
-            "password": "'${ADMIN_PASSWORD}'"
-        }'  | awk 'BEGIN {FS=": "}/^X-Subject-Token/{print $2}' | sed -e 's/\r//')
-  
-    echo ++++++++CHECK APP EXISTS - Token: $token
+    INSERT INTO oauth_client (id,name,description,secret,url,redirect_uri,image,grant_type,response_type,token_types) VALUES ({{ .Values.marketplace.id | quote }},{{ .Values.marketplace.name | quote }},{{ .Values.marketplace.description | quote }}, $APP_SECRET,{{ .Values.marketplace.url | quote }},{{ .Values.marketplace.redirectUrl | quote }},default,{{ .Values.marketplace.grantType | quote }},{{ .Values.marketplace.responseType | quote }},{{ .Values.marketplace.tokenTypes | quote }});
     
-    applicationList=$(curl --location --request GET 'http://keyrock:8080/v1/applications' \
-      --header "X-Auth-token: $token")
-    if [[ "$applicationList" == *"\"name\":\"Marketplace\""* ]]; then
-      exit 0
-    fi 
+    INSERT INTO role (name,oauth_client_id) VALUES ("admin",{{ .Values.marketplace.id | quote }});
+    INSERT INTO role (name,oauth_client_id) VALUES ("customer",{{ .Values.marketplace.id | quote }});
+    INSERT INTO role (name,oauth_client_id) VALUES ("orgAdmin",{{ .Values.marketplace.id | quote }});
+    INSERT INTO role (name,oauth_client_id) VALUES ("seller",{{ .Values.marketplace.id | quote }});
 
-    echo ++++++++CREATE APP      
-
-    appid=$(curl --location --request POST 'http://keyrock:8080/v1/applications' \
-      --header "X-Auth-token: $token" \
-      --header 'Content-Type: application/json' \
-      --data-raw '{
-        "application": {
-          "name": "Marketplace",
-          "description": "Keyrock client for the marketplace.",
-          "redirect_uri": "http://marktplatz.ki-marktplatz.fiware.dev/auth/fiware/callback",
-          "url": "http://marktplatz.ki-marktplatz.fiware.dev",
-          "grant_type": [
-            "authorization_code",
-            "refresh_token"
-          ]
-        }
-      }' | jq .application.id | sed -e 's/"//' | sed -e 's/"//') 
-
-    echo ++++++++CREATE ROLE admin
-
-    curl --location --request POST "http://keyrock:8080/v1/applications/$appid/roles" \
-      --header "X-Auth-token: $token" \
-      --header 'Content-Type: application/json' \
-      --data-raw '{
-          "role": {
-              "name": "admin"
-          }
-      }'
-      
-    echo ++++++++CREATE ROLE orgAdmin
-
-    curl --location --request POST "http://keyrock:8080/v1/applications/$appid/roles" \
-      --header "X-Auth-token: $token" \
-      --header 'Content-Type: application/json' \
-      --data-raw '{
-          "role": {
-              "name": "orgAdmin"
-          }
-      }'
-
-    echo ++++++++CREATE ROLE seller
-
-    curl --location --request POST "http://keyrock:8080/v1/applications/$appid/roles" \
-      --header "X-Auth-token: $token" \
-      --header 'Content-Type: application/json' \
-      --data-raw '{
-          "role": {
-              "name": "seller"
-          }
-      }'
-
-    echo ++++++++CREATE ROLE customer
-    
-    curl --location --request POST "http://keyrock:8080/v1/applications/$appid/roles" \
-      --header "X-Auth-token: $token" \
-      --header 'Content-Type: application/json' \
-      --data-raw '{
-          "role": {
-              "name": "customer"
-          }
-      }'
+    COMMIT;
+    EOF
