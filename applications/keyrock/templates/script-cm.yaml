@@ -63,7 +63,7 @@ data:
 
     echo ++++++++CREATE ROLE admin
 
-    curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
+    curl --location --request POST "http://keyrock:8080/v1/applications/$appid/roles" \
       --header "X-Auth-token: $token" \
       --header 'Content-Type: application/json' \
       --data-raw '{
@@ -74,7 +74,7 @@ data:
       
     echo ++++++++CREATE ROLE orgAdmin
 
-    curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
+    curl --location --request POST "http://keyrock:8080/v1/applications/$appid/roles" \
       --header "X-Auth-token: $token" \
       --header 'Content-Type: application/json' \
       --data-raw '{
@@ -85,7 +85,7 @@ data:
 
     echo ++++++++CREATE ROLE seller
 
-    curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
+    curl --location --request POST "http://keyrock:8080/v1/applications/$appid/roles" \
       --header "X-Auth-token: $token" \
       --header 'Content-Type: application/json' \
       --data-raw '{
@@ -96,7 +96,7 @@ data:
 
     echo ++++++++CREATE ROLE customer
     
-    curl --location --request POST 'http://keyrock:8080/v1/applications/${appid}/roles' \
+    curl --location --request POST "http://keyrock:8080/v1/applications/$appid/roles" \
       --header "X-Auth-token: $token" \
       --header 'Content-Type: application/json' \
       --data-raw '{
