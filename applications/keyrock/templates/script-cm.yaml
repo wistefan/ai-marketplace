@@ -9,7 +9,7 @@ metadata:
 data:
   create.sh: |-
 
-    mysql -u {{ .Values.keyrock.db.user }} -p$DB_PASSWORD  <<EOF
+    mysql -h {{ .Values.keyrock.db.host }} -u {{ .Values.keyrock.db.user }} -p$DB_PASSWORD  <<EOF
 
     INSERT INTO oauth_client (id,name,description,secret,url,redirect_uri,image,grant_type,response_type,token_types) VALUES ({{ .Values.marketplace.id | quote }},{{ .Values.marketplace.name | quote }},{{ .Values.marketplace.description | quote }}, $APP_SECRET,{{ .Values.marketplace.url | quote }},{{ .Values.marketplace.redirectUrl | quote }},default,{{ .Values.marketplace.grantType | quote }},{{ .Values.marketplace.responseType | quote }},{{ .Values.marketplace.tokenTypes | quote }});
     
