@@ -25,7 +25,7 @@ data:
       --data-raw '{
             "name": {{ .Values.keyrock.admin.email | quote }},
             "password": "'${ADMIN_PASSWORD}'"
-        }' | awk 'BEGIN {FS=": "}/^x-subject-token/{print $2}'
+        }' | awk 'BEGIN {FS=": "}/^X-Subject-Token/{print $2}'
 
     applicationList=$(curl --location --request GET 'http://keyrock:8080/v1/applications' \
       --header 'X-Auth-token: ${token}')
