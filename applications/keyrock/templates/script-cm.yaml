@@ -29,22 +29,6 @@ data:
 
     echo ++++++++CREATE APP      
 
-    curl --location --request POST 'http://keyrock:8080/v1/applications' \
-      --header "X-Auth-token: $token" \
-      --header 'Content-Type: application/json' \
-      --data-raw '{
-        "application": {
-          "name": "Marketplace",
-          "description": "Keyrock client for the marketplace.",
-          "redirect_uri": "http://marktplatz.ki-marktplatz.fiware.dev/auth/fiware/callback",
-          "url": "http://marktplatz.ki-marktplatz.fiware.dev",
-          "grant_type": [
-            "authorization_code",
-            "refresh_token"
-          ]
-        }
-      }'
-
     appid=$(curl --location --request POST 'http://keyrock:8080/v1/applications' \
       --header "X-Auth-token: $token" \
       --header 'Content-Type: application/json' \
