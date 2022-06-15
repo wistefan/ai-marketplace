@@ -22,14 +22,14 @@ data:
     echo ++++++++CHECK APP EXISTS - Token: $token
     
     applicationList=$(curl --location --request GET 'http://keyrock:8080/v1/applications' \
-      --header 'X-Auth-token: ${token}')
+      --header 'X-Auth-token: $token')
     if [[ "$applicationList" == *"\"name\":\"Marketplace\""* ]]; then
       exit 0
     fi 
 
     echo ++++++++CREATE APP
     curl --location --request POST 'http://keyrock:8080/v1/applications' \
-      --header 'X-Auth-token: ${token}' \
+      --header 'X-Auth-Token: $token' \
       --header 'Content-Type: application/json' \
       --data-raw '{
         "application": {
@@ -43,7 +43,6 @@ data:
           ]
         }
       }'
-    echo TOKEN ${token}
 
     appid=$(curl --location --request POST 'http://keyrock:8080/v1/applications' \
       --header 'X-Auth-token: ${token}' \
