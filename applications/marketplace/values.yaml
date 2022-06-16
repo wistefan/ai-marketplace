@@ -8,9 +8,7 @@ business-api-ecosystem:
     # URL of the FIWARE IDM used for user authentication
     server: https://login.ki-marktplatz.fiware.dev
     # OAuth2 Client ID of the BAE applicaiton
-    clientId: 71049899-b919-4d0f-9303-e5d2fd1bbb90
-    # OAuth2 Client Secret of the BAE application
-    clientSecret: oauthSec
+    clientId: marketplace-id
     # -- Default role: Role to be used if no role is assigned to user (optional)
     defaultRole: seller
     
