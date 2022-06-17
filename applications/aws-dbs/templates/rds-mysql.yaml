@@ -6,7 +6,7 @@ metadata:
 spec:
   allocatedStorage: {{ .Values.mysql.storage }}
   dbInstanceClass: {{ .Values.mysql.machineType | quote }}
-  dbInstanceIdentifier: "ai-marketplace-mysql"
+  dbInstanceIdentifier: "{{ .Release.Name }}-mysql"
   engine: mysql
   engineVersion: {{ .Values.mysql.version | quote}}
   masterUsername: {{ .Values.mysql.masterUser | quote}}
