@@ -2,7 +2,7 @@
 apiVersion: rds.services.k8s.aws/v1alpha1
 kind: DBInstance
 metadata:
-  name: ai-marketplace-mysql
+  name: {{ .Release.Name }}-mysql
 spec:
   allocatedStorage: {{ .Values.mysql.storage }}
   dbInstanceClass: {{ .Values.mysql.machineType | quote }}
