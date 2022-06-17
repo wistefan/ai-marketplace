@@ -1,0 +1,8 @@
+mysql: 
+  enabled: true
+  masterUser: admin
+  existingSecret: mysql-secret
+  version: 5.7.37
+  identifier: ai-marketplace-mysql
+  storage: 20
+  machineType: db.t3.micro

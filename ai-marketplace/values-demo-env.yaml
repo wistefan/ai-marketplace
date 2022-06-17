@@ -15,6 +15,14 @@ applications:
   - name: mysql
     enabled: false
 
+  - name: aws-dbs
+    enabled: true
+    source_path: applications/aws-dbs
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+
   - name: elastic
     enabled: true
     source_path: applications/elastic
