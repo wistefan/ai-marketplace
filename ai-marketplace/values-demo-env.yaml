@@ -1,0 +1,69 @@
+## values to be used for deployement in demo namespace
+## additional config file is used, since we rely on managed databases there.
+
+source: https://github.com/wistefan/ai-marketplace
+release: ai-marketplace
+destination_namespace: &destination ai-marketplace
+branch: &branch main
+secretsEnabled: &secretsEnabled false
+
+applications:
+  # we run with managed services here.
+  - name: mongodb
+    enabled: false
+  
+  - name: mysql
+    enabled: false
+
+  - name: elastic
+    enabled: true
+    source_path: applications/elastic
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+  
+  - name: keyrock
+    enabled: true
+    source_path: applications/keyrock
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+    values:
+      keyrock:
+        route: 
+          host: login.ki-marktplatz.fiware.dev
+        
+  - name: marketplace
+    enabled: true
+    source_path: applications/marketplace
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+    values:
+      business-api-ecosystem:
+        oauth:
+          server: https://login.ki-marktplatz.fiware.dev
+        externalUrl: https://marktplatz.ki-marktplatz.fiware.dev
+        bizEcosystemApis:
+          db:
+            host: kr-2.cifkfl9vchfo.eu-central-1.rds.amazonaws.com
+            user: admin
+        bizEcosystemChargingBackend:  
+          db:
+            database: charging_db
+            host: mongo.cluster-cifkfl9vchfo.eu-central-1.docdb.amazonaws.com
+            user: mongoadmin
+        bizEcosystemLogicProxy:
+          route:
+            host: marktplatz.ki-marktplatz.fiware.dev
+          db:
+            database: belp_db
+            host: mongo.cluster-cifkfl9vchfo.eu-central-1.docdb.amazonaws.com
+            user: belp
+        bizEcosystemRss:
+          host: kr-2.cifkfl9vchfo.eu-central-1.rds.amazonaws.com
+          user: admin
+          url: jdbc:mysql://kr-2.cifkfl9vchfo.eu-central-1.rds.amazonaws.com:3306/RSS
