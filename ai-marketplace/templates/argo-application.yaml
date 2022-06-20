@@ -69,7 +69,7 @@ spec:
       kind: ConfigMap
       jsonPointers:
         - /data
-    {{- end -}}
+    {{- end }}
     - group: apps
       kind: Deployment
       jsonPointers:
