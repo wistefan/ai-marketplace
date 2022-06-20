@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-mysql-cm
   labels:
-    fiware.cm-to-service: mysql-service
+    fiware.cm-to-service: mysql
     fiware.rds-instance: {{ .Release.Name }}-mysql
 data: {}
