@@ -63,6 +63,14 @@ spec:
     syncOptions:
       - Validate=true
   ignoreDifferences:
+    {{- if .managedDatabaseConfigMap }}
+    # special handling in case of managed databases. They use configmaps to provide connection information and get updated by the cluster.
+    - group: *
+      kind: ConfigMap
+      name: {{ .managedDatabaseConfigMap }}
+      jsonPointers:
+        - /data
+    {{- end -}}
     - group: apps
       kind: Deployment
       jsonPointers:
