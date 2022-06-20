@@ -20,6 +20,7 @@ applications:
     source_path: applications/aws-dbs
     source_ref: *branch
     destination: *destination
+    managedDatabase: true
     helm_values:
     - values.yaml
 
