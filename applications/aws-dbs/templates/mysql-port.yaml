@@ -5,6 +5,7 @@ metadata:
 spec:
   to:
     name: {{ .Release.Name }}-mysql-cm
+    namespace: {{ .Release.Namespace }} 
     kind: configmap
   from:
     path: ".status.endpoint.port"
@@ -12,3 +13,4 @@ spec:
       group: rds.services.k8s.aws
       kind: DBInstance
       name: {{ .Release.Name }}-mysql
+      namespace: {{ .Release.Namespace }} 
