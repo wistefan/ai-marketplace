@@ -8,13 +8,14 @@ branch: &branch main
 secretsEnabled: &secretsEnabled false
 
 applications:
-  # we run with managed services here.
   - name: mongodb
-    enabled: false
-  
-  - name: mysql
-    enabled: false
-
+    enabled: true
+    source_path: applications/mongodb
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+    
   - name: aws-dbs
     enabled: true
     source_path: applications/aws-dbs
