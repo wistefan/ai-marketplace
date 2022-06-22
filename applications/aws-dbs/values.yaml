@@ -6,4 +6,5 @@ mysql:
   identifier: ai-marketplace-mysql
   storage: 20
   securityGroupId: sg-0887dbbf5562e5a7a
+  dbSubnetGroupName: rds-subnet-group
   machineType: db.t3.micro

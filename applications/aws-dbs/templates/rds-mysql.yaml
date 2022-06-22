@@ -10,8 +10,9 @@ spec:
   engine: mysql
   engineVersion: {{ .Values.mysql.version | quote}}
   masterUsername: {{ .Values.mysql.masterUser | quote}}
+  dbSubnetGroupName: {{ .Values.mysql.dbSubnetGroupName }}
   vpcSecurityGroupIDs: [{{ .Values.mysql.securityGroupId | quote}}]
-  masterUserPassword:
+  masterUserPassword: 
     namespace: {{ .Release.Namespace }}
     name: {{ .Values.mysql.existingSecret | quote}}
     key: password
