@@ -54,7 +54,7 @@ keyrock:
     ## host of the database to be used
     host: mysql
     ## user for connecting the database
-    user: admin
+    user: root
     ## password for connecting the database
     password: dbPassword
 
