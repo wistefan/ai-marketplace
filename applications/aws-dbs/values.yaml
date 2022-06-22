@@ -1,6 +1,6 @@
 mysql: 
-  enabled: false
-  masterUser: admin
+  enabled: true
+  masterUser: root
   existingSecret: mysql-secret
   version: 5.7.37
   identifier: ai-marketplace-mysql
