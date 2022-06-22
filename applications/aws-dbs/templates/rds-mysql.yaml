@@ -10,7 +10,7 @@ spec:
   engine: mysql
   engineVersion: {{ .Values.mysql.version | quote}}
   masterUsername: {{ .Values.mysql.masterUser | quote}}
-  vpcSecurityGroupIDs: {{ .Release.Name }}-mysql
+  vpcSecurityGroupIDs: ["{{ .Release.Name }}-mysql-security-group"]
   masterUserPassword:
     namespace: {{ .Release.Namespace }}
     name: {{ .Values.mysql.existingSecret | quote}}
