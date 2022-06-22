@@ -41,9 +41,7 @@ business-api-ecosystem:
     db:
       ## host of the database to be used
       host: mysql
-      ## password for connecting the database
-      password: dbPassword
-
+      username: admin
 
       
   ## Configuration for biz-ecosystem-rss component
@@ -85,7 +83,7 @@ business-api-ecosystem:
       host: mysql
       ## URL connection string of the database to be used
       url: jdbc:mysql://mysql:3306/RSS
-
+      username: admin
 
 
   ## Configuration for biz-ecosystem-charging-backend component
