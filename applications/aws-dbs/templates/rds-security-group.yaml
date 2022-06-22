@@ -1,0 +1,8 @@
+{{- if .Values.mysql.enabled }}
+apiVersion: rds.services.k8s.aws/v1alpha1
+kind: DBSecurityGroup
+metadata:
+  name: {{ .Release.Name }}-mysql
+spec:
+  name: {{ .Release.Name }}-mysql-security-group
+{{- end -}}
