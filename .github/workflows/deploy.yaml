@@ -46,7 +46,7 @@ jobs:
           try=0
           tries=30
           # get the list of apps in the namespace 
-          componentsInstalled=$(grep "enabled: true" ai-marketplace/values.yaml -c)
+          componentsInstalled=$(grep "enabled: true" ai-marketplace/values-demo.yaml -c)
           # check if the condition is met
           while [ $healthy == 0 ] && [ $try -lt $tries ]
           do
