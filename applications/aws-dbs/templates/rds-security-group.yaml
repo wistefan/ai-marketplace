@@ -4,5 +4,6 @@ kind: DBSecurityGroup
 metadata:
   name: {{ .Release.Name }}-mysql
 spec:
+  description: "AI-Marketplace mysql security group."
   name: {{ .Release.Name }}-mysql-security-group
 {{- end -}}
