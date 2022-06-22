@@ -40,7 +40,7 @@ business-api-ecosystem:
     ## database configuration for APIs
     db:
       ## host of the database to be used
-      host: aws-dbs-mysql.cifkfl9vchfo.eu-central-1.rds.amazonaws.com
+      host: mysql
       ## password for connecting the database
       password: dbPassword
 
@@ -82,7 +82,7 @@ business-api-ecosystem:
     ## database configuration for RSS
     db:
       ## host of the database to be used
-      host: aws-dbs-mysql.cifkfl9vchfo.eu-central-1.rds.amazonaws.com
+      host: mysql
       ## URL connection string of the database to be used
       url: jdbc:mysql://mysql:3306/RSS
 
