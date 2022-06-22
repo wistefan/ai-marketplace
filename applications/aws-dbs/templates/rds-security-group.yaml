@@ -1,9 +1,0 @@
-{{- if .Values.mysql.enabled }}
-apiVersion: rds.services.k8s.aws/v1alpha1
-kind: DBSecurityGroup
-metadata:
-  name: {{ .Release.Name }}-mysql
-spec:
-  description: "AI-Marketplace mysql security group."
-  name: {{ .Release.Name }}-mysql-security-group
-{{- end -}}
