@@ -15,7 +15,7 @@ applications:
     destination: *destination
     helm_values:
     - values.yaml
-    
+
   - name: aws-dbs
     enabled: true
     source_path: applications/aws-dbs
@@ -59,7 +59,6 @@ applications:
         externalUrl: https://marktplatz.ki-marktplatz.fiware.dev
         bizEcosystemApis:
           db:
-            host: kr-2.cifkfl9vchfo.eu-central-1.rds.amazonaws.com
             user: admin
         bizEcosystemChargingBackend:  
           db:
@@ -74,6 +73,5 @@ applications:
             host: mongo.cluster-cifkfl9vchfo.eu-central-1.docdb.amazonaws.com
             user: belp
         bizEcosystemRss:
-          host: kr-2.cifkfl9vchfo.eu-central-1.rds.amazonaws.com
           user: admin
-          url: jdbc:mysql://kr-2.cifkfl9vchfo.eu-central-1.rds.amazonaws.com:3306/RSS
+          url: jdbc:mysql://mysql:3306/RSS
