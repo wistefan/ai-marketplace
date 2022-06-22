@@ -1,5 +1,5 @@
 mysql: 
-  enabled: true
+  enabled: false
   masterUser: admin
   existingSecret: mysql-secret
   version: 5.7.37
