@@ -1,4 +1,4 @@
-source: https://github.com/wistefan/ai-marketplace
+source: https://github.com/fiware-ops/ai-marketplace
 release: ai-marketplace
 destination_namespace: &destination ai-marketplace
 branch: &branch main
