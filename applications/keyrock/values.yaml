@@ -52,7 +52,7 @@ keyrock:
   ## database configuration for keyrock
   db:
     ## host of the database to be used
-    host: mysql
+    host: mysql-keyrock
     ## user for connecting the database
     user: root
     ## password for connecting the database

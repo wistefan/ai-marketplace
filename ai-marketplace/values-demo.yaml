@@ -25,6 +25,15 @@ applications:
     helm_values:
     - values.yaml
 
+  - name: aws-dbs-keyrock
+    enabled: true
+    source_path: applications/aws-dbs-keyrock
+    source_ref: *branch
+    destination: *destination
+    managedDatabase: true
+    helm_values:
+    - values.yaml
+
   - name: elastic
     enabled: true
     source_path: applications/elastic
