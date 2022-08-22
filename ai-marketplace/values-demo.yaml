@@ -80,7 +80,7 @@ applications:
           db:
             database: belp_db
             host: mongo.cluster-cifkfl9vchfo.eu-central-1.docdb.amazonaws.com
-            user: belp
+            user: mongoadmin
         bizEcosystemRss:
           user: admin
           url: jdbc:mysql://mysql:3306/RSS
