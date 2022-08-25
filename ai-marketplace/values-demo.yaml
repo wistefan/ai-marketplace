@@ -53,6 +53,8 @@ applications:
       keyrock:
         route: 
           host: login.ki-marktplatz.fiware.dev
+        initScript:
+          enabled: false
         
   - name: marketplace
     enabled: true
@@ -65,6 +67,7 @@ applications:
       business-api-ecosystem:
         oauth:
           server: https://login.ki-marktplatz.fiware.dev
+          clientId: 71049899-b919-4d0f-9303-e5d2fd1bbb90
         externalUrl: https://marktplatz.ki-marktplatz.fiware.dev
         bizEcosystemApis:
           db:
