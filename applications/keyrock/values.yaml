@@ -67,6 +67,11 @@ keyrock:
     ## email address of the admin user
     email: dennis.wendland@fiware.org
 
+  ## Init script for Keyrock DB
+  initScript:
+    ## -- Enable init script
+    enabled: true
+    
   ## Certificates configuration
   certs:
     ## -- Algorithm to firm ID tokens for OIDC

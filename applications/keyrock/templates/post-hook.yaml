@@ -1,3 +1,4 @@
+{{- if .Values.initScript.enabled -}}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -32,3 +33,4 @@ spec:
       configMap:
         name: marketplace-app-create-cm
   restartPolicy: Never
+{{- end }}
