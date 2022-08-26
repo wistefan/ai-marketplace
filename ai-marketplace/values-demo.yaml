@@ -70,8 +70,8 @@ applications:
                 issuer:
                   kind: ClusterIssuer
                   name: letsencrypt-aws-prod
-        initScript:
-          enabled: false
+      initScript:
+        enabled: false
         
   - name: marketplace
     enabled: true
