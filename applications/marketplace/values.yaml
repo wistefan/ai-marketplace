@@ -198,20 +198,20 @@ business-api-ecosystem:
     route:
       ## -- should the deployment create openshift routes
       enabled: true
-      host: marketplace.ki-marktplatz.fiware.dev
-
-      # -- host to be used
-      #host: marketplace.apps.fiware.fiware.dev
-      #host: marketplace.fiware.io
-      # -- tls configuration for the route
-      tls:
-        termination: edge
-        insecureEdgeTerminationPolicy: Redirect
-      # use the certificate issuer for letsencrypt with route53 dns-challenge
-      certificate:
-        issuer:
-          kind: ClusterIssuer
-          name: letsencrypt-aws-prod
+      # -- Routes that should be created
+      routes:
+        - tls:
+            termination: edge
+            insecureEdgeTerminationPolicy: Redirect
+            # -- configuration for certificate generation.
+            # -- see: https://github.com/FIWARE-Ops/fiware-gitops/blob/master/doc/ROUTES.md
+          # -- host to be used
+          #host: marketplace.ki-marktplatz.fiware.dev
+          # -- tls configuration for the route
+          certificate:
+            issuer:
+              kind: ClusterIssuer
+              name: letsencrypt-aws-prod
 
     ## ingress configuration
     ## OpenShift: oc label namespace marketplace ingress=nginx
