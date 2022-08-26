@@ -66,10 +66,10 @@ applications:
               tls:
                 termination: edge
                 insecureEdgeTerminationPolicy: Redirect
-              #certificate:
-              #  issuer:
-              #    kind: ClusterIssuer
-              #    name: letsencrypt-aws-prod
+              certificate:
+                issuer:
+                  kind: ClusterIssuer
+                  name: letsencrypt-aws-prod-http01
       initScript:
         enabled: false
         
