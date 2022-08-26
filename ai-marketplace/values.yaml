@@ -30,8 +30,16 @@ applications:
     - values.yaml
     values:
       keyrock:
-        route: 
-          host: login.ki-marktplatz.fiware.dev
+        route:
+          routes:
+            - host: login.ki-marktplatz.fiware.dev
+              tls:
+                termination: edge
+                insecureEdgeTerminationPolicy: Redirect
+              certificate:
+                issuer:
+                  kind: ClusterIssuer
+                  name: letsencrypt-aws-prod
 
   - name: mysql
     enabled: true
@@ -55,5 +63,13 @@ applications:
         externalUrl: https://marktplatz.ki-marktplatz.fiware.dev
         bizEcosystemLogicProxy:
           route:
-            host: marktplatz.ki-marktplatz.fiware.dev
+            routes:
+              - host: marktplatz.ki-marktplatz.fiware.dev
+                tls:
+                  termination: edge
+                  insecureEdgeTerminationPolicy: Redirect
+                certificate:
+                  issuer:
+                    kind: ClusterIssuer
+                    name: letsencrypt-aws-prod
 

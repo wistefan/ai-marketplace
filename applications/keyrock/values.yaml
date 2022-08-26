@@ -30,16 +30,20 @@ keyrock:
   route:
     ## -- should the deployment create openshift routes
     enabled: true
-    # -- host to be used
-    # -- tls configuration for the route
-    tls:
-      termination: edge
-      insecureEdgeTerminationPolicy: Redirect
-    # should a certificate for the address automatically be generated
-    certificate:
-      issuer:
-        kind: ClusterIssuer
-        name: letsencrypt-aws-prod
+    # -- Routes that should be created
+    routes:
+      - # -- tls configuration for the route
+        tls:
+          termination: edge
+          insecureEdgeTerminationPolicy: Redirect
+        # -- host to be used
+        #host: host
+        # -- configuration for certificate generation.
+        # -- see: https://github.com/FIWARE-Ops/fiware-gitops/blob/master/doc/ROUTES.md
+        certificate:
+          issuer:
+            kind: ClusterIssuer
+            name: letsencrypt-aws-prod
   
   ## ingress configuration
   ingress:

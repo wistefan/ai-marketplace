@@ -51,8 +51,25 @@ applications:
     - values.yaml
     values:
       keyrock:
+        host: https://login.ki-marktplatz.com
         route: 
-          host: login.ki-marktplatz.fiware.dev
+          routes:
+            - host: login.ki-marktplatz.fiware.dev
+              tls:
+                termination: edge
+                insecureEdgeTerminationPolicy: Redirect
+              certificate:
+                issuer:
+                  kind: ClusterIssuer
+                  name: letsencrypt-aws-prod
+            - host: login.ki-marktplatz.com
+              tls:
+                termination: edge
+                insecureEdgeTerminationPolicy: Redirect
+              certificate:
+                issuer:
+                  kind: ClusterIssuer
+                  name: letsencrypt-aws-prod
         initScript:
           enabled: false
         
@@ -66,9 +83,9 @@ applications:
     values:
       business-api-ecosystem:
         oauth:
-          server: https://login.ki-marktplatz.fiware.dev
+          server: https://login.ki-marktplatz.com
           clientId: 71049899-b919-4d0f-9303-e5d2fd1bbb90
-        externalUrl: https://marktplatz.ki-marktplatz.fiware.dev
+        externalUrl: https://daten.ki-marktplatz.com
         bizEcosystemApis:
           db:
             user: admin
@@ -79,7 +96,23 @@ applications:
             user: mongoadmin
         bizEcosystemLogicProxy:
           route:
-            host: marktplatz.ki-marktplatz.fiware.dev
+            routes:
+              - host: marktplatz.ki-marktplatz.fiware.dev
+                tls:
+                  termination: edge
+                  insecureEdgeTerminationPolicy: Redirect
+                certificate:
+                  issuer:
+                    kind: ClusterIssuer
+                    name: letsencrypt-aws-prod
+              - host: daten.ki-marktplatz.com
+                tls:
+                  termination: edge
+                  insecureEdgeTerminationPolicy: Redirect
+                certificate:
+                  issuer:
+                    kind: ClusterIssuer
+                    name: letsencrypt-aws-prod
           db:
             database: belp_db
             host: mongo.cluster-cifkfl9vchfo.eu-central-1.docdb.amazonaws.com
