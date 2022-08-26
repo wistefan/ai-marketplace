@@ -52,7 +52,7 @@ applications:
     values:
       keyrock:
         host: https://login.ki-marktplatz.com
-        route: 
+        route:
           routes:
             - host: login.ki-marktplatz.fiware.dev
               tls:
