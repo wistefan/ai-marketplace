@@ -3,10 +3,10 @@ name: keyrock
 description: Chart holder for argo-cd
 
 type: application
-version: 0.2.4
+version: 0.4.7
 appVersion: "8.1.0"
 
 dependencies:
   - name: keyrock
-    version: 0.4.4
+    version: 0.4.7
     repository: https://fiware.github.io/helm-charts
