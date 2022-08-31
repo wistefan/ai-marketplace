@@ -21,7 +21,7 @@ keyrock:
       ## tag of the image to be used
       #tag: 7.8.2
       #tag: 8.0.0
-      tag: kim-dev-rc7
+      tag: kim-dev-rc8
       ## specification of the image pull policy
       pullPolicy: Always
       #IfNotPresent
@@ -96,13 +96,15 @@ keyrock:
       ## -- Size of PVCs to be created
       size: 1Gi
       ## Image which holds the theme files
-      image: fiware/keyrock-theme-aimarketplace:0.0.7
+      image: fiware/keyrock-theme-aimarketplace:1.0.0
       ## -- specification of the image pull policy
       imagePullPolicy: Always
       ## Path to the source theme files inside the container
       sourceTheme: /themes/aimarketplace
       ## Path to the source image files inside the container
       sourceImg: /img/aimarketplace
+      ## Path to the source javascript files inside the container
+      sourceJavascript: /javascripts/aimarketplace
       ## Path to the source fonts files inside the container
       sourceFonts: /fonts/crossten
       ## Optional: Path to the source favicon directory inside the container
@@ -111,6 +113,8 @@ keyrock:
       mountTheme: /opt/fiware-idm/themes/aimarketplace
       ## Mount path for the source image files
       mountImg: /opt/fiware-idm/public/img/aimarketplace
+      # Mount path for the source javascript files
+      mountJavascript: /opt/fiware-idm/public/javascripts/aimarketplace
       ## Mount path for the source fonts files
       mountFonts: /opt/fiware-idm/public/fonts/crossten
       ## Mount path for the source favicon
@@ -155,6 +159,8 @@ keyrock:
       value: "/?new_user=1"
     - name: IDM_CSP_FORM_ACTION
       value: "'self',*"
+    - name: IDM_CSP_SCRIPT_SRC
+      value: "'self','unsafe-inline',https://*.fiware.org,https://www.googletagmanager.com"
     #- name: IDM_CSP_FORM_ACTION
     #  value: "'self',https://marketplace.ai-marketplace.fiware.io,https://daten.ki-marktplatz.com,https://ki-marktplatz.contact-cloud.com,https://con-khi-03w.contact.de"
     #- name: IDM_OIDC_JWT_ALGORITHM
