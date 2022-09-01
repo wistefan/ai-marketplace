@@ -133,12 +133,6 @@ keyrock:
       value: idm
     - name: IDM_DB_SEED
       value: "true"
-    #- name: IDM_EMAIL_HOST
-    #  value: "mailgun-fiware-io.infra.svc.cluster.local"
-    #- name: IDM_EMAIL_PORT
-    #  value: "25"
-    #- name: IDM_EMAIL_ADDRESS
-    #  value: "idp-ai-marketplace@fiware.io"
     - name: IDM_EMAIL_HOST
       value: "smtp-relay.sendinblue.com"
     - name: IDM_EMAIL_PORT
@@ -154,17 +148,13 @@ keyrock:
     - name: IDM_EMAIL_AUTH_USER
       value: sendinblue@inno-focus.com
     - name: IDM_REGISTRATION_REDIRECT
-      value: "https://marketplace.ki-marktplatz.fiware.dev/Group/Welcome/Willkommen"
+      value: "https://plattform.ki-marktplatz.com/Group/Welcome/Willkommen"
     - name: IDM_REGISTRATION_EXTENSION
       value: "/?new_user=1"
     - name: IDM_CSP_FORM_ACTION
       value: "'self',*"
     - name: IDM_CSP_SCRIPT_SRC
       value: "'self','unsafe-inline',https://*.fiware.org,https://www.googletagmanager.com"
-    #- name: IDM_CSP_FORM_ACTION
-    #  value: "'self',https://marketplace.ai-marketplace.fiware.io,https://daten.ki-marktplatz.com,https://ki-marktplatz.contact-cloud.com,https://con-khi-03w.contact.de"
-    #- name: IDM_OIDC_JWT_ALGORITHM
-    #  value: RS256
 
 marketplace:
   id: marketplace-id
