@@ -9,6 +9,11 @@ business-api-ecosystem:
     server: https://login.ki-marktplatz.fiware.dev
     # OAuth2 Client ID of the BAE applicaiton
     clientId: marketplace-id
+    # -- Callback URL path of frontend logic proxy for receiving the access tokens
+    # (callback URL would be e.g. externalUrl/auth/fiware/callback)
+    callbackPath: /auth/aimarket/callback
+    # -- IDP provider for passport strategy (fiware, keycloak, github, ...)
+    provider: aimarket
     # -- Default role: Role to be used if no role is assigned to user (optional)
     defaultRole: seller
     
@@ -189,8 +194,8 @@ business-api-ecosystem:
         ## ref: https://hub.docker.com/r/fiware/biz-ecosystem-logic-proxy
         repository: fiware/biz-ecosystem-logic-proxy
         ## -- tag of the image to be used
-        #tag: v8.0.0
-        tag: v8.1.0-rc8
+        #tag: v8.1.0-rc8
+        tag: v8.1.0-dev
         ## -- specification of the image pull policy
         pullPolicy: Always
     
@@ -260,3 +265,5 @@ business-api-ecosystem:
       #  Files will be copied to /themes/{{name}} with the PVC mounted at /themes
       sourcePath: /bae-ki-marketplace-theme
 
+    # -- Allow users to edit party attributes
+    allowEditParty: false
