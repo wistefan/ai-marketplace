@@ -10,7 +10,7 @@ business-api-ecosystem:
     # OAuth2 Client ID of the BAE applicaiton
     clientId: marketplace-id
     # -- Callback URL path of frontend logic proxy for receiving the access tokens
-    # (callback URL would be e.g. externalUrl/auth/fiware/callback)
+    # (callback URL would be e.g. externalUrl/auth/aimarket/callback)
     callbackPath: /auth/aimarket/callback
     # -- IDP provider for passport strategy (fiware, keycloak, github, ...)
     provider: aimarket
