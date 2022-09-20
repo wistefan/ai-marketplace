@@ -249,6 +249,9 @@ business-api-ecosystem:
       ## -- API version of elasticsearch
       version: 7.5
 
+    ## -- Base app path of logic proxy
+    basePath: /opt/business-ecosystem-logic-proxy
+
     ## -- Custom theme configuration
     theme:
       ## -- Enable theme
@@ -258,7 +261,7 @@ business-api-ecosystem:
       ## -- Size of PVC to be created
       size: 4Gi
       ## Image which holds the theme files
-      image: fiware/bae-ki-marketplace-theme:v0.0.6
+      image: fiware/bae-ki-marketplace-theme:v0.0.7
       # -- specification of the image pull policy
       imagePullPolicy: Always
       ## Path to the source theme files inside the container
