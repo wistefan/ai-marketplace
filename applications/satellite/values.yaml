@@ -1,0 +1,118 @@
+ishare-satellite:
+
+  deployment:
+    image:
+      repository: fiware/ishare-satellite
+      tag: 1.2.0
+      pullPolicy: Always #IfNotPresent
+
+  route:
+    enabled: true
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
+    certificate:
+      issuer:
+        kind: ClusterIssuer
+        name: letsencrypt-aws-prod
+
+  existingSecretEnvs: satellite-secret
+
+  satellite:
+    workers: 2
+    logLevel: "debug"
+
+  config:
+    id: EU.EORI.FIWARESATELLITE
+    key: ""
+    crt: ""
+
+    trusted_list:
+      - name: FIWARE-CA
+        status: "granted"
+        validity: "valid"
+        crt: |
+          -----BEGIN CERTIFICATE-----
+          MIIG2zCCBMOgAwIBAgIJALTnY4ETe5dKMA0GCSqGSIb3DQEBCwUAMGoxCzAJBgNV
+          BAYTAkRFMQ8wDQYDVQQIEwZCZXJsaW4xDzANBgNVBAoTBkZJV0FSRTEWMBQGA1UE
+          AxQNRklXQVJFLUNBX1RMUzEhMB8GCSqGSIb3DQEJARYScm9vdC1jYUBmaXdhcmUu
+          b3JnMB4XDTIyMDkyMTEyMTU1OFoXDTI3MDkyMDEyMTU1OFowgawxCzAJBgNVBAYT
+          AkRFMQ8wDQYDVQQIDAZCZXJsaW4xDzANBgNVBAcMBkJlcmxpbjEZMBcGA1UECgwQ
+          RklXQVJFIFNhdGVsbGl0ZTEZMBcGA1UEAwwQRklXQVJFLVNhdGVsbGl0ZTEjMCEG
+          CSqGSIb3DQEJARYUc2F0ZWxsaXRlQGZpd2FyZS5vcmcxIDAeBgNVBAUTF0VVLkVP
+          UkkuRklXQVJFU0FURUxMSVRFMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKC
+          AgEAoanTITpzy7HaIOgFBTst73hEeb5b5HUO9Xyo7r6AN3JBJUNvkV1D2QIitrWh
+          fT7Trd2ewKMrVtaLdJz+snNi+VxAWDZeyJHyp0vq9qQ6Y5W9vFcli6iM75ttUBt6
+          VGZzRnyvZyRl5vbdtXLNfYXrcq/rFFR854IhxRRKdGpldYaHIjHQcitLvP7ESMaG
+          47Li+1YjuVuhqORtotKCsW14cgEhUlFTCO8OaqgAKHCuqcIJxVH2JgWcKEHHevXK
+          ZOVBzORyJvrFMGjmuYTDuxhUeKcnDq+fQbCEGzrvSAD2dQSkcCWKcTdspp0WT8a/
+          swIBkk6maZAeVl4A0WBg7WNbhulUu+0P8u878CmYax4KTpJmj1wvWVapxsy2aRx+
+          YMRNlth6nn8am4imvQGNcOCFMe29u2IFosSJU7ZSBbVj7yciIphiECTSbjuFjCDX
+          PCA0f7e+ACp5hVUMsVWQ/kRlqJg4L0cOkhhxF4ckdF83jIjKnrAKa0QzBQoOq7AP
+          cFVLtGH4bX57cLPxvtusJ5gmJDd7JOScPSnpCdfNjnyd0VTmUg7A3RzAkNqeWZQR
+          dTu7QzwHOwGMQKk+aStZytE26dW5CnlrMeGmuhedl1psKaZ/R471xO8kwTOEtg2B
+          HEtFSUuV80Hz1oy4yfZwBIU2zy4PVCFjOkQ+EIyr1qF3ElMCAwEAAaOCAT8wggE7
+          MAkGA1UdEwQCMAAwEQYJYIZIAYb4QgEBBAQDAgZAMDMGCWCGSAGG+EIBDQQmFiRP
+          cGVuU1NMIEdlbmVyYXRlZCBTZXJ2ZXIgQ2VydGlmaWNhdGUwHQYDVR0OBBYEFNuI
+          Zb+vzYSmV82LLPb82LQjLQO7MIGhBgNVHSMEgZkwgZaAFCQf4QbGYYhkHdTU0TZS
+          cDAF22yDoXukeTB3MQswCQYDVQQGEwJERTEPMA0GA1UECBMGQmVybGluMQ8wDQYD
+          VQQHEwZCZXJsaW4xDzANBgNVBAoTBkZJV0FSRTESMBAGA1UEAxMJRklXQVJFLUNB
+          MSEwHwYJKoZIhvcNAQkBFhJyb290LWNhQGZpd2FyZS5vcmeCAQEwDgYDVR0PAQH/
+          BAQDAgWgMBMGA1UdJQQMMAoGCCsGAQUFBwMBMA0GCSqGSIb3DQEBCwUAA4ICAQBd
+          wAWx+L5YDtKPDAeD2AHPebkwUrhorhl7Xu5lioMq2zBmIy1YTl5V6jkXHsO1DxIq
+          Z0/ZOfhLkPAYMOhoXGF4X6GplIjuP/SUdz7czTD4G3cSREDbDyxUbCnhoyEyytL+
+          HbqQafRD6pSPWsHwEGJ9bQUWU/IxWqrpd1kaAEU0mysAxVBzejxBf6Fr3sCIhGrL
+          VSzFxgisgwgr/bhCJLPsy0rbVikYvhEC3//JIrp8xg0y56h8gHvv2VxmWQdH5WjI
+          YB07aHWspEP+WTwK/hlncEAmqysPFF7HYmvxvzCD8NmmziDeuHcXYdwXfe+DXn/e
+          YuPuYIoKPxbK9D4A6XQLlAUHNABMr3K+e3rnZdYXFAV62Mf3V4l+nCp0AvhSpNXE
+          xl9vY6p8CxO7O1+76MwAHdGXI8og68etR7fm2WMhPevEu7uH5YbfUgd7dNjyRfAD
+          ZDbV0cieWO2LccqX4DyHTbu5HXmfHNyNiavrlb+Y305b7fSn0cMaurdzeQjd9h0k
+          LthEone5ayyrY8TjquLOjuVohn2W+q4QcAgc3H/OpLxxL2r0H+HiBMCpCfspEV+a
+          Ovp84cS3Fv43YWCKH0wa0pstdKHvHa8vpMz8ZXLvv95vJzz5r+8ECYCdHMBN6INM
+          xoNnHgrNxIJ338a0pLA7vYB5tQXfk1Whl6TUmDZ72w==
+          -----END CERTIFICATE-----
+
+    parties:
+      - id: "EU.EORI.DEMARKETPLACE"
+        name: "DataMarketplace"
+        status: "Active"
+        start_date: "2021-09-27T00:00:00Z"
+        end_date: "2051-09-27T00:00:00Z"
+        crt: |
+          -----BEGIN CERTIFICATE-----
+          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
+          Isnk7g==
+          -----END CERTIFICATE-----
