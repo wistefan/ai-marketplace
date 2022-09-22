@@ -112,6 +112,7 @@ business-api-ecosystem:
       create: false
 
     existingSecret: cb-secret
+    existingCertSecret: cb-cert-secret
 
     ## Security context
     securityContext:
@@ -169,6 +170,14 @@ business-api-ecosystem:
       ## -- should the backup for file data be enabled
       enabled: false
 
+    # -- Sets wehther to expect the user access token in each request from the logic proxy
+    propagateToken: false
+
+    ## -- Configuration of local key and certificate for validation and generation of tokens
+    token:
+      enabled: true
+      identifier: "EU.EORI.DEMARKETPLACE"
+
   ## Configuration for biz-ecosystem-logic-proxy component
   ##
   bizEcosystemLogicProxy:
@@ -178,6 +187,7 @@ business-api-ecosystem:
 
     # references the already deployed secret.
     existingSecret: belp-secret
+    existingCertSecret: belp-cert-secret
 
     ## Security context
     securityContext:
@@ -270,3 +280,18 @@ business-api-ecosystem:
 
     # -- Allow users to edit party attributes
     allowEditParty: false
+
+    ## -- Configuration for external IDPs
+    externalIdp:
+      # -- Enable usage of external IDPs
+      enabled: true
+      # -- Show login button for local IDP
+      showLocalLogin: true
+
+    # -- Sets wehther the logic proxy should propagate the user access token to the backend components
+    propagateToken: false
+
+    ## -- Configuration of local key and certificate for validation and generation of tokens
+    token:
+      enabled: true
+      identifier: "EU.EORI.DEMARKETPLACE"
