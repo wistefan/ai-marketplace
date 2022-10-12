@@ -9,6 +9,11 @@ business-api-ecosystem:
     server: https://login.ki-marktplatz.fiware.dev
     # OAuth2 Client ID of the BAE applicaiton
     clientId: marketplace-id
+    # -- Callback URL path of frontend logic proxy for receiving the access tokens
+    # (callback URL would be e.g. externalUrl/auth/aimarket/callback)
+    callbackPath: /auth/aimarket/callback
+    # -- IDP provider for passport strategy (fiware, keycloak, github, ...)
+    provider: aimarket
     # -- Default role: Role to be used if no role is assigned to user (optional)
     defaultRole: seller
     
@@ -107,6 +112,7 @@ business-api-ecosystem:
       create: false
 
     existingSecret: cb-secret
+    existingCertSecret: cb-cert-secret
 
     ## Security context
     securityContext:
@@ -164,6 +170,14 @@ business-api-ecosystem:
       ## -- should the backup for file data be enabled
       enabled: false
 
+    # -- Sets wehther to expect the user access token in each request from the logic proxy
+    propagateToken: false
+
+    ## -- Configuration of local key and certificate for validation and generation of tokens
+    token:
+      enabled: true
+      identifier: "EU.EORI.DEMARKETPLACE"
+
   ## Configuration for biz-ecosystem-logic-proxy component
   ##
   bizEcosystemLogicProxy:
@@ -173,6 +187,7 @@ business-api-ecosystem:
 
     # references the already deployed secret.
     existingSecret: belp-secret
+    existingCertSecret: belp-cert-secret
 
     ## Security context
     securityContext:
@@ -189,8 +204,8 @@ business-api-ecosystem:
         ## ref: https://hub.docker.com/r/fiware/biz-ecosystem-logic-proxy
         repository: fiware/biz-ecosystem-logic-proxy
         ## -- tag of the image to be used
-        #tag: v8.0.0
-        tag: v8.1.0-rc8
+        #tag: v8.1.0-rc8
+        tag: v8.1.0-dev
         ## -- specification of the image pull policy
         pullPolicy: Always
     
@@ -244,6 +259,9 @@ business-api-ecosystem:
       ## -- API version of elasticsearch
       version: 7.5
 
+    ## -- Base app path of logic proxy
+    basePath: /opt/business-ecosystem-logic-proxy
+
     ## -- Custom theme configuration
     theme:
       ## -- Enable theme
@@ -253,10 +271,27 @@ business-api-ecosystem:
       ## -- Size of PVC to be created
       size: 4Gi
       ## Image which holds the theme files
-      image: fiware/bae-ki-marketplace-theme:v0.0.6
+      image: fiware/bae-ki-marketplace-theme:v0.0.7
       # -- specification of the image pull policy
       imagePullPolicy: Always
       ## Path to the source theme files inside the container
       #  Files will be copied to /themes/{{name}} with the PVC mounted at /themes
       sourcePath: /bae-ki-marketplace-theme
 
+    # -- Allow users to edit party attributes
+    allowEditParty: false
+
+    ## -- Configuration for external IDPs
+    externalIdp:
+      # -- Enable usage of external IDPs
+      enabled: true
+      # -- Show login button for local IDP
+      showLocalLogin: true
+
+    # -- Sets wehther the logic proxy should propagate the user access token to the backend components
+    propagateToken: false
+
+    ## -- Configuration of local key and certificate for validation and generation of tokens
+    token:
+      enabled: true
+      identifier: "EU.EORI.DEMARKETPLACE"
