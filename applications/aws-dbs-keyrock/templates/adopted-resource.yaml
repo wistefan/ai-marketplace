@@ -1,0 +1,12 @@
+apiVersion: services.k8s.aws/v1alpha1
+kind: AdoptedResource
+metadata:
+  name: {{ .Release.Name }}-mysql
+spec:
+  aws: 
+    arn: arn:aws:rds:eu-central-1:755566042294:db:aws-dbs-keyrock-mysql
+  kubernetes:
+    group: rds.services.k8s.aws/v1alpha1
+    kind: DBInstance
+    metadata:
+      name: {{ .Release.Name }}-mysql
