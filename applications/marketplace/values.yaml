@@ -207,7 +207,8 @@ business-api-ecosystem:
         #tag: v8.1.0-rc8
         tag: v8.1.0-dev
         ## -- specification of the image pull policy
-        pullPolicy: Always
+        #pullPolicy: Always
+        pullPolicy: IfNotPresent
     
     ## openshift specific route definition. Will not work on plain k8s
     route:

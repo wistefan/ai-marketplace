@@ -23,8 +23,8 @@ keyrock:
       #tag: 8.0.0
       tag: kim-dev-rc8
       ## specification of the image pull policy
-      pullPolicy: Always
-      #IfNotPresent
+      #pullPolicy: Always
+      pullPolicy: IfNotPresent
 
   ## openshift specific route definition. Will not work on plain k8s
   route:
