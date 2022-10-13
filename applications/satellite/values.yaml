@@ -6,7 +6,7 @@ ishare-satellite:
       tag: 1.2.0
       #pullPolicy: Always
       pullPolicy: IfNotPresent
-      
+
   route:
     enabled: true
     tls:

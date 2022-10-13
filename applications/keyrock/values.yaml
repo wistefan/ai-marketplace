@@ -98,7 +98,7 @@ keyrock:
       ## Image which holds the theme files
       image: fiware/keyrock-theme-aimarketplace:1.0.0
       ## -- specification of the image pull policy
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       ## Path to the source theme files inside the container
       sourceTheme: /themes/aimarketplace
       ## Path to the source image files inside the container

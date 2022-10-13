@@ -3,8 +3,8 @@ mysql:
   masterUser: root
   existingSecret: mysql-secret
   version: 5.7.37
-  identifier: ai-marketplace-keyrock-mysql
+  identifier: ai-marketplace-keyrock-mysql-2
   storage: 5
-  securityGroupId: sg-0887dbbf5562e5a7a
-  dbSubnetGroupName: rds-subnet-group
+  securityGroupId: sg-0b2e6ea76523c6e69
+  dbSubnetGroupName: rds-subnet-group-2
   machineType: db.t3.micro
