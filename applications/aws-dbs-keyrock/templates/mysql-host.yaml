@@ -13,3 +13,4 @@ spec:
       group: rds.services.k8s.aws
       kind: DBInstance
       name: {{ .Release.Name }}-mysql-2
+      namespace: ai-marketplace
