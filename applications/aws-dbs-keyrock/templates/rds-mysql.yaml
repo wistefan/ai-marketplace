@@ -2,7 +2,7 @@
 apiVersion: rds.services.k8s.aws/v1alpha1
 kind: DBInstance
 metadata:
-  name: {{ .Release.Name }}-mysql
+  name: {{ .Release.Name }}-mysql-2
 spec:
   allocatedStorage: {{ .Values.mysql.storage }}
   dbInstanceClass: {{ .Values.mysql.machineType | quote }}
