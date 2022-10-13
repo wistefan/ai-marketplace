@@ -4,7 +4,7 @@ ishare-satellite:
     image:
       repository: fiware/ishare-satellite
       tag: 1.2.0
-      pullPolicy: Always #IfNotPresent
+      pullPolicy: IfNotPresent
 
   route:
     enabled: true
