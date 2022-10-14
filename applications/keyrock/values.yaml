@@ -17,7 +17,7 @@ keyrock:
     image:
       ## keyrock image name
       ## ref: https://hub.docker.com/r/fiware/idm
-      repository: fiware/idm
+      repository: quay.io/fiware/idm
       ## tag of the image to be used
       #tag: 7.8.2
       #tag: 8.0.0
