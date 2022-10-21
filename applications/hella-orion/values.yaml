@@ -3,7 +3,7 @@ orion:
     db:
       hosts:
         - mongodb
-      name: hella_orion
+      name: hella_ngsi
       auth:
         user: root
       existingSecret: hella-orion-secret
