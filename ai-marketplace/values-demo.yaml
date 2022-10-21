@@ -140,3 +140,11 @@ applications:
         bizEcosystemRss:
           user: admin
           url: jdbc:mysql://mysql:3306/RSS
+
+  - name: hella-orion
+    enabled: true
+    source_path: applications/hella-orion
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
