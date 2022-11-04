@@ -112,7 +112,7 @@ applications:
         bizEcosystemChargingBackend:  
           db:
             database: charging_db
-            host: mongo.cluster-cifkfl9vchfo.eu-central-1.docdb.amazonaws.com
+            host: kim-mongo.cluster-cifkfl9vchfo.eu-central-1.docdb.amazonaws.com
             user: mongoadmin
         bizEcosystemLogicProxy:
           route:
@@ -135,7 +135,7 @@ applications:
                     name: letsencrypt-aws-prod-http01
           db:
             database: belp_db
-            host: mongo.cluster-cifkfl9vchfo.eu-central-1.docdb.amazonaws.com
+            host: kim-mongo.cluster-cifkfl9vchfo.eu-central-1.docdb.amazonaws.com
             user: mongoadmin
         bizEcosystemRss:
           user: admin
