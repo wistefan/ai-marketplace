@@ -149,23 +149,3 @@ applications:
     helm_values:
     - values.yaml
 
-  - name: hella-kong
-    enabled: true
-    source_path: applications/hella-kong
-    source_ref: *branch
-    destination: *destination
-    helm_values:
-    - values.yaml
-    values:
-      kong:
-        proxy:
-          route:
-            enabled: true
-            host: hella-kong.ki-marktplatz.fiware.dev
-            tls:
-              termination: edge
-              insecureEdgeTerminationPolicy: Redirect
-            certificate:
-              issuer:
-                kind: ClusterIssuer
-                name: letsencrypt-aws-prod
