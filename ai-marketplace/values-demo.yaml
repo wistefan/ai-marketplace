@@ -42,26 +42,6 @@ applications:
     helm_values:
     - values.yaml
 
-  - name: ishare-satellite
-    enabled: true
-    source_path: applications/satellite
-    source_ref: *branch
-    destination: *destination
-    helm_values:
-    - values.yaml
-    values:
-      ishare-satellite:
-        route:
-          enabled: true
-          host: satellite.ki-marktplatz.fiware.dev
-          tls:
-            termination: edge
-            insecureEdgeTerminationPolicy: Redirect
-          certificate:
-            issuer:
-              kind: ClusterIssuer
-              name: letsencrypt-aws-prod
-  
   - name: keyrock
     enabled: true
     source_path: applications/keyrock
@@ -140,12 +120,4 @@ applications:
         bizEcosystemRss:
           user: admin
           url: jdbc:mysql://mysql:3306/RSS
-
-  - name: hella-orion
-    enabled: true
-    source_path: applications/hella-orion
-    source_ref: *branch
-    destination: *destination
-    helm_values:
-    - values.yaml
 
