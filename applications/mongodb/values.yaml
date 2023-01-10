@@ -18,7 +18,8 @@ mongodb:
     ## Bitnami MongoDB image tag
     ## ref: https://hub.docker.com/r/bitnami/mongodb/tags/
     ##
-    tag: 3.6.21
+    #tag: 3.6.21
+    tag: 4.4.13
     #tag: 3.4.10-r0
     ## Specify a imagePullPolicy
     ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -40,39 +41,16 @@ mongodb:
     ## ref: https://docs.mongodb.com/manual/tutorial/enable-authentication/
     ##
     enabled: true
+    ## MongoDB root password
+    ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#setting-the-root-password-on-first-run
+    ##
+    rootPassword: dbPassword
 
-  extraEnvVarsSecret: mongo-users-secret
-  existingSecret: mongo-root-secret
+  #extraEnvVarsSecret: mongo-users-secret
+  #existingSecret: mongo-root-secret
 
   ## initdb scripts
-  ## Specify dictionary of scripts to be run at first boot
-  initdbScripts:
-    init_db.sh: |
-      set -e
-
-      mongo <<EOF
-      use admin
-      db.auth('$MONGODB_ROOT_USER', '$MONGODB_ROOT_PASSWORD')
-      db = db.getSiblingDB('charging_db');
-      db.createUser({
-        user: 'charging',
-        pwd: '$CHARGING_PASSWORD',
-        roles: [{
-            role: 'readWrite',
-            db: 'charging_db'
-          }]
-      });
-      db = db.getSiblingDB('belp_db');
-      db.auth('$MONGODB_ROOT_USER', '$MONGODB_ROOT_PASSWORD')
-      db.createUser({
-        user: 'belp',
-        pwd: '$BELP_PASSWORD',
-        roles: [{
-            role: 'readWrite',
-            db: 'belp_db'
-          }]
-      });
-      EOF
+  initdbScriptsConfigMap: mongodb-cm
 
   ## MongoDB pods' Security Context.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
@@ -86,3 +64,11 @@ mongodb:
   containerSecurityContext:
     enabled: false
 
+
+initDb:
+  idp:
+    - name: "Hella"
+      id: "EU.EORI.DEHELLA"
+      server: "https://hella-keyrock-0-kim-main.apps.fiware.fiware.dev"
+      description: "Employee IDP of Hella"
+      callbackURL: "https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev/auth/EU.EORI.DEHELLA/callback"

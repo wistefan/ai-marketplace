@@ -14,7 +14,7 @@ mysql:
   ## Specify password for root user
   ##
   ## Default: random 10 character string
-  mysqlRootPassword: Wz17vZHSH2tTelVFZoab
+  mysqlRootPassword: dbPassword
 
   ## Security context
   securityContext:

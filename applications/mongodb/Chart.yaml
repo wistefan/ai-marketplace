@@ -3,10 +3,10 @@ name: mongo-db
 description: Chart holder for argo-cd
 
 type: application
-version: 0.1.0
-appVersion: "4.4.12"
+version: 12.1.31
+appVersion: "4.4.13"
 
 dependencies:
 - name: mongodb
-  version: 10.30.12
+  version: 12.1.31
   repository: https://charts.bitnami.com/bitnami

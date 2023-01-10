@@ -1,0 +1,16 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: hella-keyrock-create-policy-cm
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "1"
+data:
+  create.sh: |-
+    mysql -h {{ .Values.keyrock.db.host }} -u {{ .Values.keyrock.db.user }} -p$DB_PASSWORD kim_hella_idm <<EOF
+
+    INSERT IGNORE INTO delegation_evidence (policy_issuer, access_subject,policy) VALUES ('EU.EORI.DEHELLA', 'EU.EORI.DEMARKETPLACE', '{"target": {"accessSubject": "EU.EORI.DEMARKETPLACE"}, "notBefore": 1616583866, "policySets": [{"target": {"environment": {"licenses": ["ISHARE.0001"]}}, "policies": [{"rules": [{"effect": "Permit"}], "target": {"actions": ["POST"], "resource": {"type": "delegationEvidence", "attributes": ["*"], "identifiers": ["*"]}}}]}], "notOnOrAfter": 1735817171, "policyIssuer": "EU.EORI.DEHELLA"}');
+
+    COMMIT;
+    EOF

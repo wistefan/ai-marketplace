@@ -1,0 +1,37 @@
+{{- if .Values.initData.enabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hella-orion-data-{{ randAlphaNum 5 | lower }}
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "1"
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: hella-orion-init-data
+          image: alpine/curl
+          command: 
+            - sh
+            - -c
+            - |
+              curl -X POST ${ORION_HOST}/ngsi-ld/v1/entities --header "Content-Type: application/ld+json" -d @/data/dummy001.json &&
+              curl -X POST ${ORION_HOST}/ngsi-ld/v1/entities --header "Content-Type: application/ld+json" -d @/data/dummy002.json
+          volumeMounts:
+            - name: hella-orion-init-data-volume
+              mountPath: "/data"
+              readOnly: true
+          env:
+            - name: ORION_HOST
+              value: {{ .Values.initData.orionHost | quote }}
+      volumes:
+        - name: hella-orion-init-data-volume
+          projected:
+            sources:
+              - configMap:
+                  name: hella-orion-data-cm
+{{- end }}

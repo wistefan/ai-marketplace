@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hella-orion-data-cm
+data:
+  dummy001.json: |
+    {
+      "id": "urn:ngsi-ld:DUMMY:ID001",
+      "type": "DUMMY",
+      "param1": {
+        "type": "Property",
+        "value": "val1"
+      },
+      "param2": {
+        "type": "Property",
+        "value": "val2"
+      },
+      "@context": [
+        "https://schema.lab.fiware.org/ld/context"
+      ]
+    }
+  dummy002.json: |
+    {
+      "id": "urn:ngsi-ld:DUMMY:ID002",
+      "type": "DUMMY",
+      "param1": {
+        "type": "Property",
+        "value": "val1"
+      },
+      "param2": {
+        "type": "Property",
+        "value": "val2"
+      },
+      "@context": [
+        "https://schema.lab.fiware.org/ld/context"
+      ]
+    }
+    

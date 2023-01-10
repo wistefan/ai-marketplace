@@ -1,0 +1,22 @@
+orion:
+  broker:
+    db:
+      hosts:
+        - mongodb
+      name: hella_ngsi
+      auth:
+        user: root
+        password: dbPassword
+
+  mongo:
+    # we want to use the individually deployed mongodb
+    enabled: false
+
+  deployment:
+    replicaCount: 1
+
+# Enable initial loading of data from configmap
+initData:
+  enabled: true
+  orionHost: hella-orion.kim-main.svc.cluster.local:1026
+    

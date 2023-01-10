@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-mysql-2-cm
-  labels:
-    fiware.cm-to-service: mysql-keyrock
-    fiware.rds-instance: {{ .Release.Name }}-mysql-2
-data: {}

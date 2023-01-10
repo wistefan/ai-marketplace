@@ -11,9 +11,11 @@ business-api-ecosystem:
     clientId: marketplace-id
     # -- Callback URL path of frontend logic proxy for receiving the access tokens
     # (callback URL would be e.g. externalUrl/auth/aimarket/callback)
-    callbackPath: /auth/aimarket/callback
+    #callbackPath: /auth/aimarket/callback
+    callbackPath: /auth/fiware/callback
     # -- IDP provider for passport strategy (fiware, keycloak, github, ...)
-    provider: aimarket
+    #provider: aimarket
+    provider: fiware
     # -- Default role: Role to be used if no role is assigned to user (optional)
     defaultRole: seller
     
@@ -30,7 +32,7 @@ business-api-ecosystem:
     serviceAccount:
       create: false
 
-    existingSecret: api-secret
+    #existingSecret: api-secret
 
     ## Security context
     securityContext:
@@ -70,7 +72,7 @@ business-api-ecosystem:
     serviceAccount:
       create: false
 
-    existingSecret: rss-secret
+    #existingSecret: rss-secret
 
     ## Security context
     securityContext:
@@ -101,6 +103,8 @@ business-api-ecosystem:
       host: mysql
       ## URL connection string of the database to be used
       url: jdbc:mysql://mysql:3306/RSS
+      ## password for connecting the database
+      password: dbPassword
 
 
 
@@ -111,8 +115,8 @@ business-api-ecosystem:
     serviceAccount:
       create: false
 
-    existingSecret: cb-secret
-    existingCertSecret: cb-cert-secret
+    #existingSecret: cb-secret
+    #existingCertSecret: cb-cert-secret
 
     ## Security context
     securityContext:
@@ -129,19 +133,15 @@ business-api-ecosystem:
         ## ref: https://hub.docker.com/r/fiware/biz-ecosystem-charging-backend
         repository: quay.io/fiware/biz-ecosystem-charging-backend
         ## -- tag of the image to be used
-        tag: v8.0.0
+        #tag: v8.0.0
+        tag: v8.1.0-dev
         ## -- specification of the image pull policy
         pullPolicy: IfNotPresent
           
     ## -- PVC configuration for charging backend plugins
     plugins:
       ## -- Enable the PVC for plugins storage
-      enabled: true
-      ## -- Annotations
-      annotations:
-        helm.sh/resource-policy: "keep"
-      ## -- IDM Admin username
-      idmUser: marketplace@ai-marketplace.fiware.io
+      enabled: false
     
     ## port that the charging backend container uses
     port: 8006
@@ -149,12 +149,12 @@ business-api-ecosystem:
     ## payment configuration
     payment:
       ## method: paypal or None (testing mode payment disconected)
-      method: paypal
+      method: None
 
     ## Paypal Oauth2 configuration
-    paypal:
+    #paypal:
       ## Paypal Client-ID
-      clientId: ATHrec61cupNwqrSFgARPY5FodDONQgy9P7yenZ7Tnfy34A-av4CpveHdYOJR_lp3GBxAyFZ0T-UuuM5
+    #  clientId: ATHrec61cupNwqrSFgARPY5FodDONQgy9P7yenZ7Tnfy34A-av4CpveHdYOJR_lp3GBxAyFZ0T-UuuM5
 
     ## database configuration for Charging backend (MongoDB)
     db:
@@ -164,6 +164,8 @@ business-api-ecosystem:
       database: charging_db
       ## username for connecting the database
       user: charging
+      ## password for connecting the database
+      password: charging
 
     ## -- Configuration for backing up the pvcs of the charging backend into a gcs-bucket
     backup:
@@ -177,6 +179,167 @@ business-api-ecosystem:
     token:
       enabled: true
       identifier: "EU.EORI.DEMARKETPLACE"
+      # -- String with private key in PEM format
+      key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        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
+        -----END RSA PRIVATE KEY-----
+      # -- String with certificate (chain) in PEM format
+      cert: |
+        -----BEGIN CERTIFICATE-----
+        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
+        Isnk7g==
+        -----END CERTIFICATE-----
+        -----BEGIN CERTIFICATE-----
+        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
+        -----END CERTIFICATE-----
+        -----BEGIN CERTIFICATE-----
+        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
+        -----END CERTIFICATE-----
 
   ## Configuration for biz-ecosystem-logic-proxy component
   ##
@@ -186,8 +349,8 @@ business-api-ecosystem:
       create: false
 
     # references the already deployed secret.
-    existingSecret: belp-secret
-    existingCertSecret: belp-cert-secret
+    #existingSecret: belp-secret
+    #existingCertSecret: belp-cert-secret
 
     ## Security context
     securityContext:
@@ -224,10 +387,10 @@ business-api-ecosystem:
           # -- host to be used
           #host: marketplace.ki-marktplatz.fiware.dev
           # -- tls configuration for the route
-          certificate:
-            issuer:
-              kind: ClusterIssuer
-              name: letsencrypt-aws-prod
+          #certificate:
+          #  issuer:
+          #    kind: ClusterIssuer
+          #    name: letsencrypt-aws-prod
 
     ## ingress configuration
     ## OpenShift: oc label namespace marketplace ingress=nginx
@@ -250,6 +413,8 @@ business-api-ecosystem:
       database: belp_db
       # username for connecting the database
       user: belp
+      # password for connecting the database
+      password: belp
 
     ## -- elasticsearch configuration
     elastic:
@@ -296,3 +461,173 @@ business-api-ecosystem:
     token:
       enabled: true
       identifier: "EU.EORI.DEMARKETPLACE"
+      # -- String with private key in PEM format
+      key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        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
+        -----END RSA PRIVATE KEY-----
+      # -- String with certificate (chain) in PEM format
+      cert: |
+        -----BEGIN CERTIFICATE-----
+        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
+        Isnk7g==
+        -----END CERTIFICATE-----
+        -----BEGIN CERTIFICATE-----
+        MIIFwjCCA6qgAwIBAgIBATANBgkqhkiG9w0BAQsFADB3MQswCQYDVQQGEwJERTEP
+        MA0GA1UECBMGQmVybGluMQ8wDQYDVQQHEwZCZXJsaW4xDzANBgNVBAoTBkZJV0FS
+        RTESMBAGA1UEAxMJRklXQVJFLUNBMSEwHwYJKoZIhvcNAQkBFhJyb290LWNhQGZp
+        d2FyZS5vcmcwHhcNMjIwOTIxMTIwNDUzWhcNMjkxMjIzMTIwNDUzWjBqMQswCQYD
+        VQQGEwJERTEPMA0GA1UECBMGQmVybGluMQ8wDQYDVQQKEwZGSVdBUkUxFjAUBgNV
+        BAMUDUZJV0FSRS1DQV9UTFMxITAfBgkqhkiG9w0BCQEWEnJvb3QtY2FAZml3YXJl
+        Lm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBANjtrG/NDN2PtA7l
+        1fU9U42abgOyMryMRoT3DB/SlOnGcg8JeWEyha4t8znZMduwP7lMUq281rS3pEZf
+        R3lUBfXhC5cBUjQDLKlYdVWTVJTTqhhMLwyNrerd4RIVkx5vMgEfObFkJOjCxDR2
+        +bFEHLyXwUaFFz8EAUj8kLsphHIuXv3NLSWiKWH2xYVOx1DKxwAZ+dqTueGyeOvi
+        QvO5r78uOG9NjwXw46boREKNSleDXpQMEG94gzgZygjdQ1tR3a/0K8QMlgBI12NO
+        pa6XL+an5l5iSzB/oYzZguAX0HGumMUvr4zhKiPzgiKyRrFf1mOjEUpgUV9rDH35
+        MNv5cjgjFR1CdvPgveZc7zjZWT4786U8NZ6Wa/jRfiPUISykUps3zfsOq2jWNqSz
+        u+LSGcoXRcaL0bIjuScQkVaH3BFua4SuU75bifMaZqol/xVA4CONqXkFkihyuqw2
+        eu86045w+XiPpZ1NYa+wdE9pR6RBNgb9vG8Po+43TLe0phxbB8eO5Xokpq2Qe9Hx
+        NbrF6sI03n/9VQXmIRcaLvtQ+k2a0sPcmMi0s1b5GCqmf13OlWRxTqPWLuKy8i8c
+        yiq2q/XVNpZ5UdIf47rkkI8PGLKe6Nzh/uhd0ZCn0t5Hu8nRS7hi/XCfJ+he6QRg
+        KCGSXITG0IwjA50gyaFo6c/9VRePAgMBAAGjZjBkMB0GA1UdDgQWBBQkH+EGxmGI
+        ZB3U1NE2UnAwBdtsgzAfBgNVHSMEGDAWgBR/813uZ43zu/7iXBl2WsWTuSlmDjAS
+        BgNVHRMBAf8ECDAGAQH/AgEAMA4GA1UdDwEB/wQEAwIBhjANBgkqhkiG9w0BAQsF
+        AAOCAgEAVgpKfvpk9uyb16VIWs3uksYzgwJyjGqpJ0j9FmTrg4HyrzfXLKlDX09W
+        6RaEZ8dVGPugNsLTA/WXWsejWjaj8Ygk8sy5OLQ/qVO9MFEK5muco2O4Au8GjrOM
+        x+Y65DMUByHPHPhUhBapUzSz4ho4rpqabHYc0FIq5tmSMweNUG9rcPRMx9//anOc
+        4fkw9Rkvl0oMXHBqDeluLVgfN6xuJX8pqZidgvj6P3Zg7dJqj+1RSNuVdfWwDTug
+        25p/VAZqKeFY1UrdbRmREQ22tjgw9eH0+8fv4hK5gWfR8U1qNOIBwRAQasUcOs4T
+        tot/QakAb/aP753p2wg2prm/pByB2S3uTcuayj6Z8OUYKQwnF6pLa9HwKOObTD6K
+        kRP2OlcPQwwNXzZiHs3eiVgAAoyCSc1I1PIKA64iAJXHsFsCHJzBBStrZLdL1Xcx
+        GeurZHg7nulEcMZ32JEShxqPsH/YqorO2RzP4XhsUMh7mEHCLMCZHphzjip5kaoi
+        y1Q7+Q1/P0kf7yUTCLudp+20Vm5kFcy9zLLggl7EUkru6djv5q2cbPSz0J/NnPjR
+        GOFMlCrJ/DjWNJN0Ss/k3rCuhQbzZGyNw1vQCc602VNpJT5N7N9H7tKaZlE89G1k
+        oU/RLlGTDpD/RxBX2s9oFiO4yIX5+R2nfKW36uC9f4hiYT6sRvE=
+        -----END CERTIFICATE-----
+        -----BEGIN CERTIFICATE-----
+        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
+        -----END CERTIFICATE-----
+
+
+loadPlugins:
+  ## Load plugins as post-hook
+  enabled: true
+  ## Target namespace for plugin installation
+  targetNamespace: ai-marketplace
+    
+    

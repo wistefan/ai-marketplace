@@ -1,0 +1,38 @@
+{{- if .Values.loadPlugins.enabled -}}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: marketplace-load-plugins-{{ randAlphaNum 5 | lower }}
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "1"
+spec:
+  containers:
+    - name: load-plugins
+      image: quay.io/openshift/origin-cli:4.9.0
+      command: 
+        - /bin/sh
+        - /scripts/load.sh
+      volumeMounts:
+        - name: scripts
+          mountPath: /scripts
+      env:
+        - name: OPENSHIFT_SERVER
+          valueFrom:
+            secretKeyRef:
+              name: marketplace-secret
+              key: openshiftServer
+        - name: OPENSHIFT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: marketplace-secret
+              key: openshiftToken
+        - name: TARGET_NAMESPACE
+          value: {{ .Values.loadPlugins.targetNamespace | quote }}
+  volumes:
+    - name: scripts
+      configMap:
+        name: marketplace-load-plugins-cm
+  restartPolicy: Never
+{{- end }}

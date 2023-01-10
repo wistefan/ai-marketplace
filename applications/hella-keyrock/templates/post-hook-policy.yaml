@@ -1,15 +1,15 @@
-{{- if .Values.keyrock.initScript.enabled -}}
+{{- if .Values.initScript.enabled -}}
 apiVersion: v1
 kind: Pod
 metadata:
-  name: keyrock-app-create-{{ randAlphaNum 5 | lower }}
+  name: hella-keyrock-policy-{{ randAlphaNum 5 | lower }}
   annotations:
     "helm.sh/hook": post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation
     "helm.sh/hook-weight": "1"
 spec:
   containers:
-    - name: app-create
+    - name: policy-create
       image: mysql:5.7
       command: 
         - /bin/sh
@@ -20,11 +20,9 @@ spec:
       env:
         - name: DB_PASSWORD
           value: dbPassword
-        - name: APP_SECRET
-          value: f7e11746-b84f-4748-86e5-107146e888h7
   volumes:
     - name: scripts
       configMap:
-        name: keyrock-app-create-cm
+        name: hella-keyrock-create-policy-cm
   restartPolicy: Never
 {{- end }}

@@ -1,0 +1,163 @@
+name: Create namespace and deploy on new branch
+
+on:
+  push:
+    branches-ignore:
+      - main
+    #branches:
+    #  - 'feature-**'
+      
+
+
+concurrency: 
+    group: ${{ github.ref }}
+    cancel-in-progress: false
+
+jobs:
+
+  create:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Git checkout
+        uses: actions/checkout@v1
+
+      - name: Authenticate and set context
+        uses: redhat-actions/oc-login@v1
+
+        with:
+          # URL to your OpenShift cluster.
+          # Refer to Step 2.
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_FIWARE }}
+
+          # Authentication Token. Can use username and password instead.
+          # Refer to Step 3.
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN_FIWARE }}
+
+          # Disables SSL cert checking. Use this if you don't have the certificate authority data.
+          insecure_skip_tls_verify: true
+
+      # extract the current branch name and provide it as a var for easier integration into sed-commands
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v5.2
+
+      - name: Log the branch name
+        run: |
+          echo ${{ steps.branch-name.outputs.current_branch }}
+
+      - name: Create namespace
+        run: |
+          oc new-project kim-${{ steps.branch-name.outputs.current_branch }} || oc project kim-${{ steps.branch-name.outputs.current_branch }}
+          oc adm policy add-role-to-group cluster-admin lodestar-developers -n kim-${{ steps.branch-name.outputs.current_branch }}
+
+      - name: Rename target branch
+        run: |
+          cd ai-marketplace/
+          # replace the default destination namespace(ai-marketplace-poc) with the branch namespace (prefixed with kim-)
+          sed -i'' -e 's/destination_namespace: \&destination ai-marketplace-poc/destination_namespace: \&destination kim-${{ steps.branch-name.outputs.current_branch }}/g' values-poc.yaml
+          # prefix the application name with the branch name to avoid collisions (prefixed with kim-)
+          sed -i'' -e 's/release: ai-marketplace-poc/release: kim-${{ steps.branch-name.outputs.current_branch }}/g' values-poc.yaml
+          # set the target revision to the current branch
+          sed -i'' -e 's/branch: \&branch main/branch: \&branch ${{ steps.branch-name.outputs.current_branch }}/g' values-poc.yaml
+          # Replace subdomain in URLs with branch name (prefixed by kim-)
+          sed -i'' -e 's/kim-main/kim-${{ steps.branch-name.outputs.current_branch }}/g' values-poc.yaml
+          # Replace default namespace in post-hook manifests
+          #ls -la ../applications/marketplace/templates/
+          #sed -i'' -e 's/kim-main/kim-${{ steps.branch-name.outputs.current_branch }}/g' ../applications/marketplace/templates/marketplace-sealed-secret.yaml
+          #cat ../applications/marketplace/templates/marketplace-sealed-secret.yaml
+      
+      # See https://github.com/helm/chart-releaser-action/issues/6
+      - name: Install Helm
+        run: |
+          curl -fsSLo get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
+      - name: Create sealed secrets
+        run: |
+          echo "Installing kubeseal..."
+          mkdir tmp
+          cd tmp
+          wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.19.3/kubeseal-0.19.3-linux-amd64.tar.gz
+          tar -xvzf kubeseal-0.19.3-linux-amd64.tar.gz kubeseal
+          sudo install -m 755 kubeseal /usr/local/bin/kubeseal
+          kubeseal --version
+
+          echo "Creating secret file..."
+          cd ../applications/marketplace/templates/
+          OS_SERVER=`echo -n "${{ secrets.OPENSHIFT_SERVER_FIWARE }}" | base64 -w 0`
+          OS_TOKEN=`echo -n "${{ secrets.OPENSHIFT_TOKEN_FIWARE }}" | base64 -w 0`
+          echo "apiVersion: v1" >> marketplace-secret.yaml
+          echo "kind: Secret" >> marketplace-secret.yaml
+          echo "metadata:" >> marketplace-secret.yaml
+          echo "  name: marketplace-secret" >> marketplace-secret.yaml
+          echo "  namespace: kim-${{ steps.branch-name.outputs.current_branch }}" >> marketplace-secret.yaml
+          echo "data:" >> marketplace-secret.yaml
+          echo "  openshiftServer: ${OS_SERVER}" >> marketplace-secret.yaml
+          echo "  openshiftToken: ${OS_TOKEN}" >> marketplace-secret.yaml
+
+          echo "Sealing secret..."
+          kubeseal <marketplace-secret.yaml >marketplace-sealed-secret.yaml -o yaml --controller-namespace sealed-secrets --controller-name sealed-secrets
+          rm marketplace-secret.yaml
+          
+          echo "Commit sealed secret..."
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add marketplace-sealed-secret.yaml
+          git commit -m "Adding marketplace-secret"
+
+      - name: Push sealed secrets to branch
+        continue-on-error: true
+        uses: ad-m/github-push-action@master
+        with:
+          branch: ${{ steps.branch-name.outputs.current_branch }}
+
+      - name: Deploy applications
+        run: |
+          cd ai-marketplace/
+          # render app of apps and apply it
+          helm template ${{ secrets.OVERWRITE_VALUES }} -f values-poc.yaml . | oc -n argocd apply -f -
+          cd ..
+
+      - name: Check if all apps are healthy
+        run: |
+          # wait for the changes to take place and potentially crash the applications
+          sleep 60
+
+          # bool to check if the apps are healthy
+          healthy=0
+          # counter to set a number of tries
+          try=0
+          tries=30
+          # get the list of apps in the namespace 
+          componentsInstalled=$(grep "enabled: true" ai-marketplace/values-poc.yaml -c)
+          # check if the condition is met
+          while [ $healthy == 0 ] && [ $try -lt $tries ]
+          do
+            apps=$(oc get applications.argoproj.io --no-headers -n argocd -l destination-namespace=kim-${{ steps.branch-name.outputs.current_branch }} | awk '{ print $3 }')
+            healthyapps=0
+            for app in $apps
+            do
+              if [ $app != "Healthy" ]
+              then
+                echo "Trying again in 30 seconds"
+                sleep 30
+                try=$(( try + 1 ))
+                break
+              elif [ $app == "Healthy" ]
+              then  
+                healthyapps=$(( healthyapps + 1 ))
+              fi
+              if [ $healthyapps == $componentsInstalled ]
+              then
+                healthy=1
+              fi
+            done
+          done
+
+          if [ $try -eq $tries ]
+          then
+            echo "ERROR: Tried too many times"
+            exit 1
+          fi

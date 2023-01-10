@@ -1,0 +1,186 @@
+## values to be used for deployement in PoC namespaces
+## additional config file is used, since we rely on managed databases there.
+
+source: https://github.com/FIWARE-AI-Marketplace/ai-marketplace
+release: ai-marketplace-poc
+destination_namespace: &destination ai-marketplace-poc
+branch: &branch main
+secretsEnabled: &secretsEnabled false
+
+applications:
+  - name: mongodb
+    enabled: true
+    source_path: applications/mongodb
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+    values:
+      initDb:
+        idp:
+          - name: "Hella"
+            id: "EU.EORI.DEHELLA"
+            server: "https://hella-keyrock-0-kim-main.apps.fiware.fiware.dev"
+            description: "Employee IDP of Hella"
+            callbackURL: "https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev/auth/EU.EORI.DEHELLA/callback"
+          - name: "Automotive Supplier"
+            id: "EU.EORI.DEAUTOSUPPLIER"
+            server: "https://autosupplier-keyrock-0-kim-main.apps.fiware.fiware.dev"
+            description: "Employee IDP of Automotove Supplier"
+            callbackURL: "https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev/auth/EU.EORI.DEAUTOSUPPLIER/callback"
+          - name: "Car Dealer"
+            id: "EU.EORI.DECARDEALER"
+            server: "https://cardealer-keyrock-0-kim-main.apps.fiware.fiware.dev"
+            description: "Employee IDP of Car Dealer"
+            callbackURL: "https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev/auth/EU.EORI.DECARDEALER/callback"
+
+  - name: mysql
+    enabled: true
+    source_path: applications/mysql
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+
+  - name: elastic
+    enabled: true
+    source_path: applications/elastic
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+
+  - name: keyrock
+    enabled: true
+    source_path: applications/keyrock
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+    values:
+      marketplace:
+        id: 71049899-b919-4d0f-9303-e5d2fd1bbb90
+        url: https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev
+        redirectUrl: https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev/auth/fiware/callback
+      keyrock:
+        host: https://keyrock-0-kim-main.apps.fiware.fiware.dev
+        
+  - name: marketplace
+    enabled: true
+    source_path: applications/marketplace
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+    values:
+      loadPlugins:
+        targetNamespace: kim-main
+      business-api-ecosystem:
+        oauth:
+          server: https://keyrock-0-kim-main.apps.fiware.fiware.dev
+          clientId: 71049899-b919-4d0f-9303-e5d2fd1bbb90
+          clientSecret: f7e11746-b84f-4748-86e5-107146e888h7
+        externalUrl: https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev
+        bizEcosystemChargingBackend:
+          db:
+            host: mongodb.kim-main.svc.cluster.local
+        bizEcosystemLogicProxy:
+          db:
+            host: mongodb.kim-main.svc.cluster.local
+
+  - name: ishare-satellite
+    enabled: true
+    source_path: applications/satellite
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+
+  - name: hella-orion
+    enabled: true
+    source_path: applications/hella-orion
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+    values:
+      orion:
+        broker:
+          db:
+            hosts:
+              - mongodb.kim-main.svc.cluster.local
+      initData:
+        orionHost: hella-orion.kim-main.svc.cluster.local:1026
+
+  - name: hella-kong
+    enabled: true
+    source_path: applications/hella-kong
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+    values:
+      ar:
+        host: "https://hella-keyrock-0-kim-main.apps.fiware.fiware.dev"
+      satellite:
+        host: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev"
+
+  - name: hella-keyrock
+    enabled: true
+    source_path: applications/hella-keyrock
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+    values:
+      keyrock:
+        host: https://hella-keyrock-0-kim-main.apps.fiware.fiware.dev
+        satellite:
+          url: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev"
+          tokenEndpoint: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev/token"
+          partiesEndpoint: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev/parties"
+
+  - name: hella-as
+    enabled: true
+    source_path: applications/hella-as
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+    values:
+      activation-service:
+        config:
+          ar:
+            token: "https://hella-keyrock-0-kim-main.apps.fiware.fiware.dev/oauth2/token"
+            policy: "https://hella-keyrock-0-kim-main.apps.fiware.fiware.dev/ar/policy"
+            delegation: "https://hella-keyrock-0-kim-main.apps.fiware.fiware.dev/ar/delegation"
+
+  - name: autosupplier-keyrock
+    enabled: true
+    source_path: applications/autosupplier-keyrock
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+    values:
+      keyrock:
+        host: https://autosupplier-keyrock-0-kim-main.apps.fiware.fiware.dev
+        satellite:
+          url: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev"
+          tokenEndpoint: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev/token"
+          partiesEndpoint: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev/parties"
+
+  - name: cardealer-keyrock
+    enabled: true
+    source_path: applications/cardealer-keyrock
+    source_ref: *branch
+    destination: *destination
+    helm_values:
+    - values.yaml
+    values:
+      keyrock:
+        host: https://cardealer-keyrock-0-kim-main.apps.fiware.fiware.dev
+        satellite:
+          url: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev"
+          tokenEndpoint: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev/token"
+          partiesEndpoint: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev/parties"

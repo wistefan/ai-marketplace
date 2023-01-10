@@ -8,8 +8,8 @@ keyrock:
   #   *.apps.fiware.fiware.dev
   #
 
-  existingSecret: keyrock-secret
-  extraEnvVarsSecret: keyrock-env-secret
+  #existingSecret: keyrock-secret
+  #extraEnvVarsSecret: keyrock-env-secret
   
   ## deployment specific configuration
   statefulset:
@@ -40,10 +40,10 @@ keyrock:
         #host: host
         # -- configuration for certificate generation.
         # -- see: https://github.com/FIWARE-Ops/fiware-gitops/blob/master/doc/ROUTES.md
-        certificate:
-          issuer:
-            kind: ClusterIssuer
-            name: letsencrypt-aws-prod
+        #certificate:
+        #  issuer:
+        #    kind: ClusterIssuer
+        #    name: letsencrypt-aws-prod
   
   ## ingress configuration
   ingress:
@@ -56,7 +56,7 @@ keyrock:
   ## database configuration for keyrock
   db:
     ## host of the database to be used
-    host: mysql-keyrock
+    host: mysql
     ## user for connecting the database
     user: root
     ## password for connecting the database
@@ -67,9 +67,9 @@ keyrock:
     ## username of the initial keyrock admin
     user: admin
     ## password of the initial admin
-    password: ignored
+    password: admin
     ## email address of the admin user
-    email: dennis.wendland@fiware.org
+    email: admin@test.com
 
   ## Init script for Keyrock DB
   initScript:
@@ -83,7 +83,7 @@ keyrock:
     ## Configuration for PVC mounted at certs/ directory for persistance of HTTPS and application certificates/keys
     pvc:
       ## -- Create PVC mounted at certs/ directory for persistance of HTTPS and application certificates/keys
-      enabled: true
+      enabled: false
       ## -- Size of the PVC for certs/ directory
       size: 2Gi
       
@@ -160,8 +160,8 @@ marketplace:
   id: marketplace-id
   name: Marketplace
   description: Keyrock client for the marketplace.
-  url: http://marktplatz.ki-marktplatz.fiware.dev
-  redirectUrl: http://marktplatz.ki-marktplatz.fiware.dev/auth/fiware/callback
+  url: http://daten.kim-main.fiware.dev
+  redirectUrl: http://daten.kim-main.fiware.dev/auth/fiware/callback
   grantType: authorization_code,refresh_token
   responseType: code
   tokenTypes: bearer

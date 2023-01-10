@@ -1,0 +1,40 @@
+name: Delete apps and namespace after deleting branch
+
+# trigger on branch deletion to bind the namespaces lifecycle to the branch lifecycle
+on:
+  delete:
+    branches-ignore:
+      - main
+
+jobs:
+
+  delete:
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Git checkout
+        uses: actions/checkout@v1
+
+
+      - name: Authenticate and set context
+        uses: redhat-actions/oc-login@v1
+
+        with:
+          # URL to your OpenShift cluster.
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_FIWARE }}
+
+          # Authentication Token. Can use username and password instead.
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN_FIWARE }}
+
+          # Disables SSL cert checking. Use this if you don't have the certificate authority data.
+          insecure_skip_tls_verify: true
+
+      - name: Delete applications
+        run: |
+          # remove all apps deployed for the namespace corresponding to the branch
+          oc delete application -l destination-namespace=kim-${{ github.event.ref }} -n argocd
+      # delete the namespace associated to the trigger event's branch
+      - name: Delete namespace
+        run: |
+          oc delete project kim-${{ github.event.ref }}

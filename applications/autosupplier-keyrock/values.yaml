@@ -1,0 +1,246 @@
+keyrock:
+  statefulset:
+    image:
+      repository: fiware/idm
+      #tag: i4trust-rc8
+      tag: 8.3.0
+      #pullPolicy: Always
+      pullPolicy: IfNotPresent
+
+  db:
+    user: root
+    password: dbPassword
+    host: mysql
+
+  admin:
+    user: admin
+    password: admin
+    email: admin@test.com
+
+  route:
+    enabled: true
+    routes:
+      - tls:
+          termination: edge
+          insecureEdgeTerminationPolicy: Redirect
+  theme:
+    enabled: false
+
+  ## Configuration of Authorisation Registry (AR)
+  authorisationRegistry:
+    # -- Enable usage of authorisation registry
+    enabled: true
+    # -- Identifier (EORI) of AR
+    identifier: "EU.EORI.DEAUTOSUPPLIER"
+    # -- URL of AR
+    #url: "https://ar.isharetest.net"
+    url: "internal"
+
+  ## Configuration of iSHARE Satellite
+  satellite:
+    # -- Enable usage of satellite
+    enabled: true
+    # -- Identifier (EORI) of satellite
+    identifier: "EU.EORI.FIWARESATELLITE"
+    # -- URL of satellite
+    url: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev"
+    # -- Token endpoint of satellite
+    tokenEndpoint: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev/token"
+    # -- Parties endpoint of satellite
+    partiesEndpoint: "https://ishare-satellite-kim-main.apps.fiware.fiware.dev/parties"
+
+  additionalEnvVars:
+    - name: IDM_TITLE
+      value: "Automotive Supplier - Company Portal"
+    - name: IDM_DEBUG
+      value: "true"
+    - name: DEBUG
+      value: "*"
+    - name: IDM_DB_NAME
+      value: kim_sup_idm
+    - name: IDM_DB_SEED
+      value: "true"
+    - name: IDM_SERVER_MAX_HEADER_SIZE
+      value: "32768"
+
+  ## -- Configuration of local key and certificate for validation and generation of tokens
+  token:
+    # -- Enable storage of local key and certificate
+    enabled: true
+    # -- Identifier (EORI) of local organisation
+    identifier: "EU.EORI.DEAUTOSUPPLIER"
+    # -- String with private key in PEM format
+    key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      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
+      -----END RSA PRIVATE KEY-----
+    # -- String with certificate (chain) in PEM format
+    cert: |
+      -----BEGIN CERTIFICATE-----
+      MIIGYDCCBEigAwIBAgIJALTnY4ETe5dNMA0GCSqGSIb3DQEBCwUAMGoxCzAJBgNV
+      BAYTAkRFMQ8wDQYDVQQIEwZCZXJsaW4xDzANBgNVBAoTBkZJV0FSRTEWMBQGA1UE
+      AxQNRklXQVJFLUNBX1RMUzEhMB8GCSqGSIb3DQEJARYScm9vdC1jYUBmaXdhcmUu
+      b3JnMB4XDTIyMTIzMDEzMjIyM1oXDTI3MTIyOTEzMjIyM1owgawxCzAJBgNVBAYT
+      AkRFMQ8wDQYDVQQIDAZCZXJsaW4xDzANBgNVBAcMBkJlcmxpbjEcMBoGA1UECgwT
+      QXV0b21vdGl2ZSBTdXBwbGllcjEWMBQGA1UEAwwNQXV0by1TdXBwbGllcjEkMCIG
+      CSqGSIb3DQEJARYVb3BlcmF0b3JAc3VwcGxpZXIuY29tMR8wHQYDVQQFExZFVS5F
+      T1JJLkRFQVVUT1NVUFBMSUVSMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKC
+      AgEAqXiYiBSSUxH2szyfCFw7lB8603uxdjXsSZYQ0EEh3HhPe0uLHkCdENZRBfvH
+      7wSvFnUKJKb8Uelui0rZkyJ5Iw3pLnqTFK3mrYahRTUOzl5EmHsyZ4BoRCzWgoaA
+      5zaT5zQY3KDqY/lva+k+MZNjsaiBovvBwCTpkz8RV61rJJaGVdnfS1FaTTMkEniO
+      o64gHS6IsmMS3IOO4asEvmHpuY64PQNsOQSkdhl85YZqH82dMyWBYJm8tdmezglk
+      MnyQnQYy7vBFC3kLtL6y6dvExbdkMQ0ZwQAPDSZPFxWmnsZ1fBLsNMPGFPw7YvCd
+      ToVYe9TaZhB3wUlsR1+MEs/UFyQoPJ/pRNrSbLEB9pceh1n91J74zMUIn1LkwOcw
+      +cjaVfqSsryOdVdJO0jmnFu5plR6H0TQDKbc7O8WlhezAjO1V4Oqp0r5Qn6lwjwK
+      PqoA0K3GE/Hmz3BvIAoQ5LrMjUBHybiCH3shdO2I4VkeilyjgbZaFtpRa87ao5V+
+      zT0Pl5iqXrfyiGLkLa5Baf/iZ1p5viISNWpxe/Rhq53g4g0nhzNYPDK4dEev+p6h
+      pewDCFHXWGFJlDr0x+MPGAhbivCLm8LUkR4OBgrTOX4m8RscfkEZ/mY5GeeyE9y/
+      sljlgqlamJaIGnGhtN3Cf04vdCiVwHQBrWeyYpnsle+2aRECAwEAAaOBxTCBwjAJ
+      BgNVHRMEAjAAMBEGCWCGSAGG+EIBAQQEAwIFoDAzBglghkgBhvhCAQ0EJhYkT3Bl
+      blNTTCBHZW5lcmF0ZWQgQ2xpZW50IENlcnRpZmljYXRlMB0GA1UdDgQWBBSwfUZu
+      Edw7wM4BtoGgRO1WvdaElDAfBgNVHSMEGDAWgBQkH+EGxmGIZB3U1NE2UnAwBdts
+      gzAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwME
+      MA0GCSqGSIb3DQEBCwUAA4ICAQDXwXtADPOeVJ6Wxbpsf1k6XsoqEEBchRvdpuha
+      wcyh+oMpGk/eeOVjZdjVnIFUEB+gpKLfA7kex5slKCY9F0+4/JR6P3tIISCcgBzr
+      uIjHQ/ETR2jfq9t49fMYs8kOz764Ce/l9HRn48BeTe1cMgiEPrs4GPgwNHkI+VB3
+      +1n2JMkMpytelysSATPWrrC1bCaeFYYZ/tNLOhQ8b21orGJ88Hg0JL4t0esubwR6
+      /kFJBDBZSiT1YiWQLl4422oXWaYwiUP0TjNBRQVxWx7GQGVHjIbnus+Ysz/feBlJ
+      VNsGviCsE+WmovFtJxFDBm6MDtADa5f2nyg0XkN6Yj5FbpNNjZ4RoVnq9270P9fi
+      vESM3OF2JuoX0h9psADZ5MpkTvsQMt7Bayqhiab4u27LVWuITPllfnykM5/ipz3b
+      8NMGIQBoyzwGQLt4WkppKdhbw5CmzkM3vkc9eJb8rRJO7qUqAkAzN2Yti1HJM474
+      ux8dJaVx+JkIGXhS5Do0wwSs3QTXZTBeaiiSqMKvTTbFUdTPQkHR+L3PvVlxNJl2
+      gozMsp6V+T53WpKB5rfcD3qh/u4ooWCoivtuS6HoxOevxzNji0IUzXBAAibVBq2r
+      BmId+p2Yc0CMK0iypiWnS9MSpSZCxPJ3tFB8YzITvdZRxcqBfS8lYmPOykOzisvy
+      COabxg==
+      -----END CERTIFICATE-----
+      -----BEGIN CERTIFICATE-----
+      MIIFwjCCA6qgAwIBAgIBATANBgkqhkiG9w0BAQsFADB3MQswCQYDVQQGEwJERTEP
+      MA0GA1UECBMGQmVybGluMQ8wDQYDVQQHEwZCZXJsaW4xDzANBgNVBAoTBkZJV0FS
+      RTESMBAGA1UEAxMJRklXQVJFLUNBMSEwHwYJKoZIhvcNAQkBFhJyb290LWNhQGZp
+      d2FyZS5vcmcwHhcNMjIwOTIxMTIwNDUzWhcNMjkxMjIzMTIwNDUzWjBqMQswCQYD
+      VQQGEwJERTEPMA0GA1UECBMGQmVybGluMQ8wDQYDVQQKEwZGSVdBUkUxFjAUBgNV
+      BAMUDUZJV0FSRS1DQV9UTFMxITAfBgkqhkiG9w0BCQEWEnJvb3QtY2FAZml3YXJl
+      Lm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBANjtrG/NDN2PtA7l
+      1fU9U42abgOyMryMRoT3DB/SlOnGcg8JeWEyha4t8znZMduwP7lMUq281rS3pEZf
+      R3lUBfXhC5cBUjQDLKlYdVWTVJTTqhhMLwyNrerd4RIVkx5vMgEfObFkJOjCxDR2
+      +bFEHLyXwUaFFz8EAUj8kLsphHIuXv3NLSWiKWH2xYVOx1DKxwAZ+dqTueGyeOvi
+      QvO5r78uOG9NjwXw46boREKNSleDXpQMEG94gzgZygjdQ1tR3a/0K8QMlgBI12NO
+      pa6XL+an5l5iSzB/oYzZguAX0HGumMUvr4zhKiPzgiKyRrFf1mOjEUpgUV9rDH35
+      MNv5cjgjFR1CdvPgveZc7zjZWT4786U8NZ6Wa/jRfiPUISykUps3zfsOq2jWNqSz
+      u+LSGcoXRcaL0bIjuScQkVaH3BFua4SuU75bifMaZqol/xVA4CONqXkFkihyuqw2
+      eu86045w+XiPpZ1NYa+wdE9pR6RBNgb9vG8Po+43TLe0phxbB8eO5Xokpq2Qe9Hx
+      NbrF6sI03n/9VQXmIRcaLvtQ+k2a0sPcmMi0s1b5GCqmf13OlWRxTqPWLuKy8i8c
+      yiq2q/XVNpZ5UdIf47rkkI8PGLKe6Nzh/uhd0ZCn0t5Hu8nRS7hi/XCfJ+he6QRg
+      KCGSXITG0IwjA50gyaFo6c/9VRePAgMBAAGjZjBkMB0GA1UdDgQWBBQkH+EGxmGI
+      ZB3U1NE2UnAwBdtsgzAfBgNVHSMEGDAWgBR/813uZ43zu/7iXBl2WsWTuSlmDjAS
+      BgNVHRMBAf8ECDAGAQH/AgEAMA4GA1UdDwEB/wQEAwIBhjANBgkqhkiG9w0BAQsF
+      AAOCAgEAVgpKfvpk9uyb16VIWs3uksYzgwJyjGqpJ0j9FmTrg4HyrzfXLKlDX09W
+      6RaEZ8dVGPugNsLTA/WXWsejWjaj8Ygk8sy5OLQ/qVO9MFEK5muco2O4Au8GjrOM
+      x+Y65DMUByHPHPhUhBapUzSz4ho4rpqabHYc0FIq5tmSMweNUG9rcPRMx9//anOc
+      4fkw9Rkvl0oMXHBqDeluLVgfN6xuJX8pqZidgvj6P3Zg7dJqj+1RSNuVdfWwDTug
+      25p/VAZqKeFY1UrdbRmREQ22tjgw9eH0+8fv4hK5gWfR8U1qNOIBwRAQasUcOs4T
+      tot/QakAb/aP753p2wg2prm/pByB2S3uTcuayj6Z8OUYKQwnF6pLa9HwKOObTD6K
+      kRP2OlcPQwwNXzZiHs3eiVgAAoyCSc1I1PIKA64iAJXHsFsCHJzBBStrZLdL1Xcx
+      GeurZHg7nulEcMZ32JEShxqPsH/YqorO2RzP4XhsUMh7mEHCLMCZHphzjip5kaoi
+      y1Q7+Q1/P0kf7yUTCLudp+20Vm5kFcy9zLLggl7EUkru6djv5q2cbPSz0J/NnPjR
+      GOFMlCrJ/DjWNJN0Ss/k3rCuhQbzZGyNw1vQCc602VNpJT5N7N9H7tKaZlE89G1k
+      oU/RLlGTDpD/RxBX2s9oFiO4yIX5+R2nfKW36uC9f4hiYT6sRvE=
+      -----END CERTIFICATE-----
+      -----BEGIN CERTIFICATE-----
+      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
+      -----END CERTIFICATE-----
+
+## Init script for Keyrock
+initScript:
+  enabled: true
+  user:
+    - username: "autosupplier-operator"
+      email: "operator@autosupplier.com"
+      password: "operator"
+    - username: "autosupplier-user"
+      email: "user@autosupplier.com"
+      password: "user"
+
+    
+  
