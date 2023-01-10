@@ -28,11 +28,11 @@ jobs:
         with:
           # URL to your OpenShift cluster.
           # Refer to Step 2.
-          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_FIWARE }}
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
 
           # Authentication Token. Can use username and password instead.
           # Refer to Step 3.
-          openshift_token: ${{ secrets.OPENSHIFT_TOKEN_FIWARE }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
 
           # Disables SSL cert checking. Use this if you don't have the certificate authority data.
           insecure_skip_tls_verify: true
@@ -86,8 +86,8 @@ jobs:
 
           echo "Creating secret file..."
           cd ../applications/marketplace/templates/
-          OS_SERVER=`echo -n "${{ secrets.OPENSHIFT_SERVER_FIWARE }}" | base64 -w 0`
-          OS_TOKEN=`echo -n "${{ secrets.OPENSHIFT_TOKEN_FIWARE }}" | base64 -w 0`
+          OS_SERVER=`echo -n "${{ secrets.OPENSHIFT_SERVER }}" | base64 -w 0`
+          OS_TOKEN=`echo -n "${{ secrets.OPENSHIFT_TOKEN }}" | base64 -w 0`
           echo "apiVersion: v1" >> marketplace-secret.yaml
           echo "kind: Secret" >> marketplace-secret.yaml
           echo "metadata:" >> marketplace-secret.yaml
