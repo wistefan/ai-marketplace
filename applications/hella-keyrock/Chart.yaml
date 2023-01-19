@@ -3,10 +3,10 @@ name: pdc-keyrock
 description: Chart holder for argo-cd
 
 type: application
-version: 0.4.9
+version: 0.5.0
 appVersion: "8.3.0"
 
 dependencies:
   - name: keyrock
-    version: 0.4.9
+    version: 0.5.0
     repository: https://fiware.github.io/helm-charts
