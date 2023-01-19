@@ -16,6 +16,10 @@ mysql:
   ## Default: random 10 character string
   mysqlRootPassword: dbPassword
 
+  ## Persist data to a persistent volume
+  persistence:
+    enabled: false
+
   ## Security context
   securityContext:
     enabled: false
