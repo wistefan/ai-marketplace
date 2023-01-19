@@ -1,0 +1,20 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: marketplace-fill-indexes-cm
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "50"
+data:
+  indexes.sh: |-
+    echo "Login to OC cluster"
+    oc login $OPENSHIFT_SERVER --token="${OPENSHIFT_TOKEN}"
+    echo "Target namespace:" $TARGET_NAMESPACE
+    echo "Get ChargingBackend pod"
+    POD_NAME=`kubectl -n $TARGET_NAMESPACE get pod -l component=biz-ecosystem-logic-proxy -o jsonpath='{.items[0].metadata.name}'`
+    echo $POD_NAME
+    echo "Fill indexes..."
+    kubectl -n $TARGET_NAMESPACE exec -i $POD_NAME -c business-api-ecosystem-biz-ecosystem-logic-proxy -- node /opt/business-ecosystem-logic-proxy/fill_indexes.js
+    
+    

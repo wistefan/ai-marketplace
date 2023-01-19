@@ -1,15 +1,15 @@
-{{- if .Values.initData.addressEnabled -}}
+{{- if .Values.initData.catalogEnabled -}}
 apiVersion: v1
 kind: Pod
 metadata:
-  name: market-address-create-{{ randAlphaNum 5 | lower }}
+  name: market-catalog-create-{{ randAlphaNum 5 | lower }}
   annotations:
     "helm.sh/hook": post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation
-    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-weight": "3"
 spec:
   containers:
-    - name: market-address-create
+    - name: market-catalog-create
       image: python:3
       command:
         - /bin/sh
@@ -20,7 +20,7 @@ spec:
   volumes:
     - name: scripts
       configMap:
-        name: marketplace-create-address-cm
+        name: marketplace-create-catalog-cm
   restartPolicy: Never
 
 {{- end }}

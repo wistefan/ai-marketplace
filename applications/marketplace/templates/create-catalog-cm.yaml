@@ -1,0 +1,97 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: marketplace-create-catalog-cm
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "3"
+data:
+  entrypoint.sh: |-
+    pip install requests
+    echo "Creating catalog..."
+    python /scripts/create.py
+  create.py: |-
+    import requests
+    from requests.exceptions import HTTPError
+    import sys
+
+    def main():
+      KEYROCK_HOST = "http://hella-keyrock:8080"
+      APIS_HOST = "http://marketplace-biz-ecosystem-apis:8080"
+      LP_EXTERNAL_HOST = {{ .Values.initData.lpHref | quote }}
+      LP_EXTERNAL_HOST = LP_EXTERNAL_HOST+":443"
+      OPERATOR_USER = "provider-operator"
+
+      # Login
+      login_data = {
+        'name': "admin@test.com",
+        'password': "admin"
+        }
+      login_header = {
+        'Content-Type': 'application/json'
+      }
+      print("Login at Keyrock of provider")
+      login_response = requests.post(KEYROCK_HOST+'/v1/auth/tokens', json=login_data, headers=login_header)
+      try:
+        login_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      token = login_response.headers["X-Subject-Token"]
+
+      # Get list of users and obtain user ID
+      user_header = {
+        'Content-Type': 'application/json',
+        'X-Auth-token': token
+      }
+      print("Get list of users and look up <"+OPERATOR_USER+">")
+      user_response = requests.get(KEYROCK_HOST+'/v1/users', headers=user_header)
+      try:
+        user_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      users = user_response.json()['users']
+      operator_id = None
+      for u in users:
+        if u['username'] == OPERATOR_USER:
+          operator_id = u['id']
+          break
+      if not operator_id:
+        print("Could not find user <"+OPERATOR_USER+">")
+        sys.exit(2)
+      print("User ID:", operator_id)
+
+      # Create catalogue and get its ID
+      catalog_header = {
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+      catalog_data = {
+        "lifecycleStatus": "Launched",
+        "relatedParty": [
+            {
+                "id": operator_id,
+                "href": LP_EXTERNAL_HOST+"/DSPartyManagement/api/partyManagement/v2/individual/"+operator_id,
+                "role": "Owner"
+            }
+        ],
+        "name": "Car Diagnosis",
+        "description": "Offerings about car diagnosis services"
+      }
+      print("Create Catalog and get ID")
+      catalog_response = requests.post(APIS_HOST+'/DSProductCatalog/api/catalogManagement/v2/catalog', json=catalog_data, headers=catalog_header)
+      try:
+        catalog_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      if not catalog_response.json()['id']:
+        print("No catalog ID in response")
+        sys.exit(3)
+      catalog_id = catalog_response.json()['id']
+      print(" --> Created! Catalog ID:", catalog_id)
+      
+    if __name__ == "__main__":
+      main()
+

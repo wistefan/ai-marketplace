@@ -630,9 +630,15 @@ loadPlugins:
   ## Target namespace for plugin installation
   targetNamespace: ai-marketplace
 
-createAddresses:
+initData:
   ## Create billing addresses for consuming parties as post-hook
-  enabled: true
+  addressEnabled: true
+  ## Create a catalog for service provider
+  catalogEnabled: true
+  ## Reloading of indexes after creation of objects
+  indexesEnabled: true
   ## href base path of LP
   lpHref: https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev
+  ## Target namespace for init data
+  targetNamespace: ai-marketplace
     

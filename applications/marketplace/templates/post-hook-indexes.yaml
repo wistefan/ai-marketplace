@@ -1,0 +1,38 @@
+{{- if .Values.initData.indexesEnabled.enabled -}}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: marketplace-indexes-{{ randAlphaNum 5 | lower }}
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "50"
+spec:
+  containers:
+    - name: load-plugins
+      image: quay.io/openshift/origin-cli:4.9.0
+      command: 
+        - /bin/sh
+        - /scripts/indexes.sh
+      volumeMounts:
+        - name: scripts
+          mountPath: /scripts
+      env:
+        - name: OPENSHIFT_SERVER
+          valueFrom:
+            secretKeyRef:
+              name: marketplace-secret
+              key: openshiftServer
+        - name: OPENSHIFT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: marketplace-secret
+              key: openshiftToken
+        - name: TARGET_NAMESPACE
+          value: {{ .Values.initData.targetNamespace | quote }}
+  volumes:
+    - name: scripts
+      configMap:
+        name: marketplace-fill-indexes-cm
+  restartPolicy: Never
+{{- end }}
