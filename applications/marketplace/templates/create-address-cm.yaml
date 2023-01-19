@@ -96,7 +96,7 @@ data:
         "accountType": "shipping address",
         "customer": {
             "id": customer_id,
-            "href": "http://marketplace-biz-ecosystem-logic-proxy-0-kim-poc.apps.fiware.fiware.dev/DSCustomerManagement/api/customerManagement/v2/customer/"+str(customer_id),
+            "href": LP_EXTERNAL_HOST+"/DSCustomerManagement/api/customerManagement/v2/customer/"+str(customer_id),
             "name": operator_id
         }
       }
@@ -119,13 +119,13 @@ data:
         "state": "Defined",
         "customerAccount": {
             "id": customer_account_id,
-            "href": "http://marketplace-biz-ecosystem-logic-proxy-0-kim-poc.apps.fiware.fiware.dev/DSCustomerManagement/api/customerManagement/v2/customerAccount/"+str(customer_account_id),
+            "href": LP_EXTERNAL_HOST+"/DSCustomerManagement/api/customerManagement/v2/customerAccount/"+str(customer_account_id),
             "name": operator_id
         },
         "relatedParty": [
             {
                 "id": operator_id,
-                "href": "https://marketplace-biz-ecosystem-logic-proxy-0-kim-poc.apps.fiware.fiware.dev:443/DSPartyManagement/api/partyManagement/v2/individual/"+str(operator_id),
+                "href": LP_EXTERNAL_HOST+"/DSPartyManagement/api/partyManagement/v2/individual/"+str(operator_id),
                 "role": "bill receiver"
             }
         ]
