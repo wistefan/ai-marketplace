@@ -633,5 +633,6 @@ loadPlugins:
 createAddresses:
   ## Create billing addresses for consuming parties as post-hook
   enabled: true
-
+  ## href base path of LP
+  lpHref: https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev
     

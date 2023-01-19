@@ -75,6 +75,8 @@ applications:
     values:
       loadPlugins:
         targetNamespace: kim-main
+      createAddresses:
+        lpHref: https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev
       business-api-ecosystem:
         oauth:
           server: https://keyrock-0-kim-main.apps.fiware.fiware.dev

@@ -17,7 +17,7 @@ data:
     import sys
 
     APIS_HOST = "http://marketplace-biz-ecosystem-apis:8080"
-    LP_EXTERNAL_HOST = {{ .Values.business-api-ecosystem.externalUrl | quote }}
+    LP_EXTERNAL_HOST = {{ .Values.createAddresses.lpHref | quote }}
     LP_EXTERNAL_HOST = LP_EXTERNAL_HOST+":443"
 
     def createAddress(keyrock_hostname, user, contact_medium):
