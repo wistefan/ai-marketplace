@@ -1,0 +1,26 @@
+{{- if .Values.createAddresses.enabled -}}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: market-address-create-{{ randAlphaNum 5 | lower }}
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "2"
+spec:
+  containers:
+    - name: market-address-create
+      image: python:3
+      command:
+        - /bin/sh
+        - /scripts/entrypoint.sh
+      volumeMounts:
+        - name: scripts
+          mountPath: /scripts
+  volumes:
+    - name: scripts
+      configMap:
+        name: marketplace-create-address-cm
+  restartPolicy: Never
+
+{{- end }}

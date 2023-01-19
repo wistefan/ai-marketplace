@@ -1,0 +1,218 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: marketplace-create-address-cm
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "2"
+data:
+  entrypoint.sh: |-
+    pip install requests
+    echo "Creating addresses..."
+    python /scripts/create.py
+  create.py: |-
+    import requests
+    from requests.exceptions import HTTPError
+    import sys
+
+    APIS_HOST = "http://marketplace-biz-ecosystem-apis:8080"
+    LP_EXTERNAL_HOST = {{ .Values.business-api-ecosystem.externalUrl | quote }}
+    LP_EXTERNAL_HOST = LP_EXTERNAL_HOST+":443"
+
+    def createAddress(keyrock_hostname, user, contact_medium):
+      KEYROCK_HOST = keyrock_hostname
+    
+      # Login
+      login_data = {
+        'name': "admin@test.com",
+        'password': "admin"
+      }
+      login_header = {
+        'Content-Type': 'application/json'
+      }
+      print("Login at Keyrock of", user)
+      login_response = requests.post(KEYROCK_HOST+'/v1/auth/tokens', json=login_data, headers=login_header)
+      try:
+        login_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      token = login_response.headers["X-Subject-Token"]
+
+      # Get list of users and obtain user ID
+      user_header = {
+        'Content-Type': 'application/json',
+        'X-Auth-token': token
+      }
+      print("Get list of users and look up <"+user+">")
+      user_response = requests.get(KEYROCK_HOST+'/v1/users', headers=user_header)
+      try:
+        user_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      users = user_response.json()['users']
+      operator_id = None
+      for u in users:
+        if u['username'] == user:
+            operator_id = u['id']
+            break
+      if not operator_id:
+        print("Could not find user <"+user+">")
+        sys.exit(2)
+      print("User ID:", operator_id)
+
+      # Create object <customer> and get its ID
+      customer_header = {
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+      customer_data = {
+        "name": operator_id,
+        "contactMedium": contact_medium,
+        "relatedParty": {
+            "id": operator_id,
+            "href": LP_EXTERNAL_HOST+'/DSPartyManagement/api/partyManagement/v2/individual/'+operator_id,
+            "role": "Owner"
+        }
+      }
+      print("Create <Customer> object and get ID")
+      customer_response = requests.post(APIS_HOST+'/DSCustomerManagement/api/customerManagement/v2/customer', json=customer_data, headers=customer_header)
+      try:
+        customer_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      if not customer_response.json()['id']:
+        print("No customer ID in response")
+        sys.exit(3)
+      customer_id = customer_response.json()['id']
+      print(" --> Created! Customer ID:", customer_id)
+    
+
+      # Create object <customerAccount>
+      customer_account_data = {
+        "name": operator_id,
+        "accountType": "shipping address",
+        "customer": {
+            "id": customer_id,
+            "href": "http://marketplace-biz-ecosystem-logic-proxy-0-kim-poc.apps.fiware.fiware.dev/DSCustomerManagement/api/customerManagement/v2/customer/"+str(customer_id),
+            "name": operator_id
+        }
+      }
+      print("Create <CustomerAccount> object and get ID")
+      customer_account_response = requests.post(APIS_HOST+'/DSCustomerManagement/api/customerManagement/v2/customerAccount', json=customer_account_data, headers=customer_header)
+      try:
+        customer_account_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      if not customer_account_response.json()['id']:
+        print("No customerAccount ID in response")
+        sys.exit(3)
+      customer_account_id = customer_account_response.json()['id']
+      print(" --> Created! CustomerAccount ID:", customer_account_id)
+      
+      # Create object <billingAccount>
+      billing_data = {
+        "name": operator_id,
+        "state": "Defined",
+        "customerAccount": {
+            "id": customer_account_id,
+            "href": "http://marketplace-biz-ecosystem-logic-proxy-0-kim-poc.apps.fiware.fiware.dev/DSCustomerManagement/api/customerManagement/v2/customerAccount/"+str(customer_account_id),
+            "name": operator_id
+        },
+        "relatedParty": [
+            {
+                "id": operator_id,
+                "href": "https://marketplace-biz-ecosystem-logic-proxy-0-kim-poc.apps.fiware.fiware.dev:443/DSPartyManagement/api/partyManagement/v2/individual/"+str(operator_id),
+                "role": "bill receiver"
+            }
+        ]
+      }
+      print("Create <BillingAccount> object and get ID")
+      billing_response = requests.post(APIS_HOST+'/DSBillingManagement/api/billingManagement/v2/billingAccount', json=billing_data, headers=customer_header)
+      try:
+        billing_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      print(" --> BillingAccount created")
+
+    def main():
+      # Create for autosupplier
+      contact_medium = [
+        {
+            "preferred": False,
+            "type": "Email",
+            "medium": {
+                "emailAddress":
+                "operator@autosupplier.com"
+            }
+        },
+        {
+            "preferred": False,
+            "type": "PostalAddress",
+            "medium": {
+                "streetOne":
+                "Supplierstr. 15",
+                "postcode": "12345",
+                "city": "Berlin",
+                "stateOrProvince": "Berlin",
+                "country": "DE"
+            }
+        },
+        {
+            "preferred": False,
+            "type": "TelephoneNumber",
+            "medium": {
+                "type": "Office",
+                "number": "+4915121234567"
+            }
+        }
+      ]
+      print("********")
+      print("Create address for <autosupplier>")
+      createAddress("http://autosupplier-keyrock:8080", "autosupplier-operator", contact_medium)
+      print("********")
+      print("")
+      
+      # Create for cardealer
+      contact_medium = [
+        {
+            "preferred": False,
+            "type": "Email",
+            "medium": {
+                "emailAddress":
+                "operator@cardealer.com"
+            }
+        },
+        {
+            "preferred": False,
+            "type": "PostalAddress",
+            "medium": {
+                "streetOne":
+                "Dealerstr. 29",
+                "postcode": "54321",
+                "city": "Berlin",
+                "stateOrProvince": "Berlin",
+                "country": "DE"
+            }
+        },
+        {
+            "preferred": False,
+            "type": "TelephoneNumber",
+            "medium": {
+                "type": "Office",
+                "number": "+4915121234567"
+            }
+        }
+      ]
+      print("********")
+      print("Create address for <cardealer>")
+      createAddress("http://cardealer-keyrock:8080", "cardealer-operator", contact_medium)
+      print("********")
+      print("")
+    
+    if __name__ == "__main__":
+      main()

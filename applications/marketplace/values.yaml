@@ -629,5 +629,9 @@ loadPlugins:
   enabled: true
   ## Target namespace for plugin installation
   targetNamespace: ai-marketplace
-    
+
+createAddresses:
+  ## Create billing addresses for consuming parties as post-hook
+  enabled: true
+
     
