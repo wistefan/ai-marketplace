@@ -8,8 +8,8 @@ metadata:
     "helm.sh/hook-weight": "3"
 data:
   entrypoint.sh: |-
-    pip install requests
-    echo "Creating catalog..."
+    pip install requests pymongo
+    echo "Creating offering for i4Trust..."
     python /scripts/create.py
   create.py: |-
     import requests
