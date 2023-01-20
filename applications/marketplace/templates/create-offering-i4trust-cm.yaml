@@ -31,11 +31,11 @@ data:
       PLUGIN_ID = "ngsi-ld-data-service"
       ASSET_TYPE = "NGSI-LD Data Service"
       CATALOG_NAME = "Car Diagnosis"
-      MONGODB_HOST = {{ .Values.bizEcosystemChargingBackend.db.host | quote }}
+      MONGODB_HOST = "mongodb"
       MONGODB_USER = "root"
       MONGODB_PW = "dbPassword"
-      MONGODB_PORT = {{ .Values.bizEcosystemChargingBackend.db.port | quote }}
-      MONGODB_DB = {{ .Values.bizEcosystemChargingBackend.db.database | quote }}
+      MONGODB_PORT = "27017"
+      MONGODB_DB = "charging_db"
 
       # Login
       login_data = {
