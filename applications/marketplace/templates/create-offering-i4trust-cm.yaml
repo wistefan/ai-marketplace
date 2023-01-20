@@ -1,0 +1,438 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: marketplace-create-offering-i4t-cm
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "3"
+data:
+  entrypoint.sh: |-
+    pip install requests
+    echo "Creating catalog..."
+    python /scripts/create.py
+  create.py: |-
+    import requests
+    from requests.exceptions import HTTPError
+    from pymongo import MongoClient
+    from bson import ObjectId
+    import sys
+    
+    def main():
+      KEYROCK_HOST = "http://hella-keyrock:8080"
+      APIS_HOST = "http://marketplace-biz-ecosystem-apis:8080"
+      LP_INTERNAL_HOST = {{ .Values.initData.i4trust.lpHrefInternal | quote }}
+      LP_EXTERNAL_HOST = {{ .Values.initData.lpHref | quote }}
+      LP_EXTERNAL_HOST = LP_EXTERNAL_HOST+":443"
+      SERVICE_ENDPOINT = {{ .Values.initData.i4trust.serviceEndpoint | quote }}
+      AR_ENDPOINT = {{ .Values.initData.i4trust.arEndpoint | quote }}
+      OPERATOR_USER = "provider-operator"
+      PROVIDER_EORI = "EU.EORI.DEHELLA"
+      PLUGIN_ID = "ngsi-ld-data-service"
+      ASSET_TYPE = "NGSI-LD Data Service"
+      CATALOG_NAME = "Car Diagnosis"
+      MONGODB_HOST = {{ .Values.bizEcosystemChargingBackend.db.host | quote }}
+      MONGODB_USER = "root"
+      MONGODB_PW = "dbPassword"
+      MONGODB_PORT = {{ .Values.bizEcosystemChargingBackend.db.port | quote }}
+      MONGODB_DB = {{ .Values.bizEcosystemChargingBackend.db.database | quote }}
+
+      # Login
+      login_data = {
+        'name': "admin@test.com",
+        'password': "admin"
+      }
+      login_header = {
+        'Content-Type': 'application/json'
+      }
+      print("Login at Keyrock of provider")
+      login_response = requests.post(KEYROCK_HOST+'/v1/auth/tokens', json=login_data, headers=login_header)
+      try:
+        login_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      token = login_response.headers["X-Subject-Token"]
+
+      # Get list of users and obtain user ID
+      user_header = {
+        'Content-Type': 'application/json',
+        'X-Auth-token': token
+      }
+      print("Get list of users and look up <"+OPERATOR_USER+">")
+      user_response = requests.get(KEYROCK_HOST+'/v1/users', headers=user_header)
+      try:
+        user_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      users = user_response.json()['users']
+      operator_id = None
+      for u in users:
+        if u['username'] == OPERATOR_USER:
+          operator_id = u['id']
+          break
+      if not operator_id:
+        print("Could not find user <"+OPERATOR_USER+">")
+        sys.exit(2)
+      print("User ID:", operator_id)
+
+      # Get asset types from DB --> wstore_resourceplugin
+      print("Get asset types from MongoDB")
+      mongoUri = ('mongodb://%s:%s@%s:%s/%s?authSource=admin' % (MONGODB_USER, MONGODB_PW, MONGODB_HOST, MONGODB_PORT, MONGODB_DB))
+      client = MongoClient(mongoUri)
+      db = client[MONGODB_DB]
+      col_assettypes = db['wstore_resourceplugin']
+      cur_asset_types = col_assettypes.find({'plugin_id': PLUGIN_ID})
+      if not cur_asset_types[0]:
+        print("Plugin <"+PLUGIN_ID+"> not found")
+        sys.exit(3)
+      asset_type = cur_asset_types[0]
+      print(" --> Found!")
+
+      # Fill wstore_organization, name=operator_id
+      print("Upsert organization in MongoDB")
+      col_orgs = db['wstore_organization']
+      org_query = {
+        'name': operator_id
+      }
+      org_update = {
+        'name': operator_id,
+        'notification_url': None,
+        'acquired_offerings': [],
+        'private': True,
+        'correlation_number': 0,
+        'managers': [ 1 ],
+        'actor_id': None,
+        'idp': PROVIDER_EORI
+      }
+      org_result = col_orgs.update_one(org_query, { '$set': org_update }, upsert=True)
+      organization = col_orgs.find_one({'name': operator_id})
+      org_id = organization['_id']
+      print(" --> Created/updated organization:", org_id)
+
+      # Fill wstore_userprofile, current_org=_id param from created org
+      print("Upsert user profile in MongoDB")
+      col_user = db['wstore_userprofile']
+      user_update = {
+        'user_id': 1,
+        'current_organization_id': ObjectId(org_id),
+        'complete_name': OPERATOR_USER,
+        'actor_id': OPERATOR_USER,
+        'current_roles': [ "provider" ],
+        'access_token': 'token'
+      }
+      user_result = col_user.update_one({ 'actor_id': OPERATOR_USER }, { '$set': user_update }, upsert=True)
+      user_profile = col_user.find_one({'actor_id': OPERATOR_USER})
+      print(" --> Created/update user profile:", user_profile)
+
+      # Simulate uploadJob --> fill wstore_resource, with provider_id = _id param from created org, get asset ID
+      print("Insert resource for digital asset in MongoDB")
+      col_resource = db['wstore_resource']
+      resource_insert = {
+        "product_id": "DUMMY_PROD_ID",
+        "version": "0.1",
+        "provider_id": ObjectId(org_id),
+        "content_type": "fiware ngsi-ld",
+        "download_link": SERVICE_ENDPOINT,
+        "resource_path": "",
+        "old_versions": None,
+        "state": "attached",
+        "resource_type": "NGSI-LD Data Service",
+        "is_public": False,
+        "has_terms": False,
+        "bundled_assets": [ ],
+        "meta_info": {
+            "ar_id": PROVIDER_EORI,
+            "ar_token_endpoint": AR_ENDPOINT+"/token",
+            "ar_policy_endpoint": AR_ENDPOINT+"/createpolicy",
+            "minutes": 30,
+            "resource_type": "DUMMY",
+            "get_allowed": True,
+            "get_ids": "*",
+            "get_attributes": "*",
+            "patch_allowed": False,
+            "post_allowed": False,
+            "delete_allowed": False,
+            "patch_subscription_allowed": False,
+            "get_subscription_allowed": False,
+            "post_subscription_allowed": False,
+            "delete_subscription_allowed": False,
+            "notification_allowed": False,
+            "sidecar_endpoint_config_allowed": False,
+            "idp_id": PROVIDER_EORI,
+            "patch_attributes": "*",
+            "patch_ids": "*",
+            "post_attributes": "*",
+            "post_ids": "*",
+            "delete_attributes": "*",
+            "delete_ids": "*",
+            "get_subscription_attributes": "*",
+            "get_subscription_ids": "*",
+            "patch_subscription_attributes": "*",
+            "patch_subscription_ids": "*",
+            "post_subscription_attributes": "*",
+            "post_subscription_ids": "*",
+            "delete_subscription_attributes": "*",
+            "delete_subscription_ids": "*",
+            "notification_attributes": "*",
+            "notification_ids": "*"
+        }
+      }
+      resource_result = col_resource.insert_one(resource_insert)
+      resource = col_resource.find_one({'_id': resource_result.inserted_id})
+      resource_id = resource['_id']
+      print(" --> Created resource:", resource_id, resource)
+    
+      # POST productSpec
+      spec_header = {
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+      spec_data = {
+        "version": "1.0",
+        "lifecycleStatus": "Launched",
+        "isBundle": False,
+        "bundledProductSpecification": [],
+        "productSpecCharacteristic": [
+            {
+                "name": "Asset type",
+                "description": "Type of the digital asset described in this product specification",
+                "valueType": "string",
+                "configurable": False,
+                "productSpecCharacteristicValue": [
+                    {
+                        "default": True,
+                        "unitOfMeasure": "",
+                        "value": ASSET_TYPE,
+                        "valueFrom": "",
+                        "valueTo": ""
+                    }
+                ]
+            },
+            {
+                "name": "Media type",
+                "description": "Media type of the digital asset described in this product specification",
+                "valueType": "string",
+                "configurable": False,
+                "productSpecCharacteristicValue": [
+                    {
+                        "default": True,
+                        "unitOfMeasure": "",
+                        "value": "FIWARE NGSI-LD",
+                        "valueFrom": "",
+                        "valueTo": ""
+                    }
+                ]
+            },
+            {
+                "name": "Location",
+                "description": "URL pointing to the digital asset described in this product specification",
+                "valueType": "string",
+                "configurable": False,
+                "productSpecCharacteristicValue": [
+                    {
+                        "default":True,
+                        "unitOfMeasure": "",
+                        "value": SERVICE_ENDPOINT,
+                        "valueFrom": "",
+                        "valueTo": ""
+                    }
+                ]
+            },
+            {
+                "name": "Asset",
+                "description": "ID of the asset being offered as registered in the BAE",
+                "valueType": "string",
+                "configurable": False,
+                "productSpecCharacteristicValue": [
+                    {
+                        "default": True,
+                        "unitOfMeasure": "",
+                        "value": str(resource_id),
+                        "valueFrom": "",
+                        "valueTo": ""
+                    }
+                ]
+            },
+            {
+                "name": "Entity type",
+                "description": "Entity type that would be accessed",
+                "valueType": "string",
+                "configurable": False,
+                "productSpecCharacteristicValue": [
+                    {
+                        "valueType": "string",
+                        "value": "DUMMY",
+                        "unitOfMeasure": "",
+                        "valueFrom": "",
+                        "valueTo": "",
+                        "default": True
+                    }
+                ]
+            },
+            {
+                "name": "GET Entity Attributes Permission",
+                "description": "Entity attributes that can be read",
+                "valueType": "string",
+                "configurable": False,
+                "productSpecCharacteristicValue": [
+                    {
+                        "valueType": "string",
+                        "value": "*",
+                        "unitOfMeasure": "",
+                        "valueFrom": "",
+                        "valueTo": "",
+                        "default": True
+                    }
+                ]
+            },
+            {
+                "name": "GET Entity IDs",
+                "description": "Entity IDs that can be read",
+                "valueType": "string",
+                "configurable": False,
+                "productSpecCharacteristicValue": [
+                    {
+                        "valueType": "string",
+                        "value": "*",
+                        "unitOfMeasure": "",
+                        "valueFrom": "",
+                        "valueTo": "",
+                        "default": True
+                    }
+                ]
+            }
+        ],
+        "productSpecificationRelationship": [],
+        "attachment": [
+            {
+                "type": "Picture"
+            }
+        ],
+        "relatedParty": [
+            {
+                "id": operator_id,
+                "href": LP_EXTERNAL_HOST+"/DSPartyManagement/api/partyManagement/v2/individual/"+operator_id,
+                "role": "Owner"
+            }
+        ],
+        "name": "Car Diagnosis Product test",
+        "brand": "Diagnosis Provider",
+        "description": "Car Diagnosis data service product"
+      }
+      print("Create productSpecification and get ID")
+      spec_response = requests.post(APIS_HOST+'/DSProductCatalog/api/catalogManagement/v2/productSpecification', json=spec_data, headers=spec_header)
+      try:
+        spec_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      if not spec_response.json()['id']:
+        print("No productSpecification ID in response")
+        sys.exit(3)
+      spec_id = spec_response.json()['id']
+      spec_href = spec_response.json()['href']
+      print(" --> Created! productSpecification ID:", spec_id)
+        
+
+      # Update product ID in wstore_resource
+      print("Update product_id in resource in MongoDB")
+      col_resource.update_one({'_id': resource_id}, { '$set': {'product_id': spec_id} })
+      print(" --> Done!")
+
+
+      # Get catalog ID
+      print("Getting catalog ID")
+      cat_response = requests.get(APIS_HOST+'/DSProductCatalog/api/catalogManagement/v2/catalog')
+      try:
+        cat_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      if not cat_response.json() and len(cat_response.json())<1:
+        print("No catalogs found")
+        sys.exit(3)
+      cat_id = None
+      for c in cat_response.json():
+        if c['name'] == CATALOG_NAME:
+            cat_id = c['id']
+            break
+      if not cat_id:
+        print("Could not find catalog <"+CATALOG_NAME+">")
+        sys.exit(2)
+      print(" --> Catalog ID:", cat_id)
+    
+      # POST productOffering
+      offering_data = {
+        "bundledProductOffering": [],
+        "category": [],
+        "description": "Car Diagnosis data service",
+        "isBundle": False,
+        "lifecycleStatus": "Launched",
+        "name": "Car Diagnosis Test",
+        "place": [],
+        "productOfferingPrice": [],
+        "validFor": {
+            "startDateTime": "2023-01-18T14:49:18+01:00"
+        },
+        "version": "1.0",
+        "serviceCandidate": {
+            "id": "defaultRevenue",
+            "name": "Revenue Sharing Service"
+        },
+        "productSpecification": {
+            "id": str(spec_id),
+            "href": LP_INTERNAL_HOST+"/DSProductCatalog/api/catalogManagement/v2/productSpecification/"+str(spec_id)
+        },
+        "productOfferingTerm": [
+            {
+                "name": "",
+                "description": "",
+                "type": "None",
+                "isFullCustom": False,
+                "exclusivity": "",
+                "sector": "",
+                "region": "",
+                "purpose": "",
+                "transferability": "",
+                "validFor": {}
+            }
+        ]
+      }
+      print("Create productOffering")
+      offering_response = requests.post(APIS_HOST+'/DSProductCatalog/api/catalogManagement/v2/catalog/'+str(cat_id)+'/productOffering', json=offering_data, headers=spec_header)
+      try:
+        offering_response.raise_for_status()
+      except HTTPError as e:
+        print(e.response.text)
+        sys.exit(1)
+      if not offering_response.json()['id']:
+        print("No productOffering ID in response")
+        sys.exit(3)
+      offering_id = offering_response.json()['id']
+      offering_href = offering_response.json()['href']
+      print(" --> Created! productOffering ID:", offering_id)
+    
+
+      # Fill wstore_offering, href from productSpec
+      print("Insert offering in MongoDB")
+      col_offering = db['wstore_offering']
+      offering_insert = {
+        "off_id": str(offering_id),
+        "href": offering_href,
+        "owner_organization_id": ObjectId(org_id),
+        "name": "Car Diagnosis service",
+        "version": "1.0",
+        "description": "",
+        "is_digital": True,
+        "asset_id": resource_id,
+        "is_open": False,
+        "bundled_offerings": [ ]
+      }
+      offering_result = col_offering.insert_one(offering_insert)
+      print(" --> Created offering in DB!")
+
+
+    if __name__ == "__main__":
+      main()
+

@@ -641,4 +641,15 @@ initData:
   lpHref: https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev
   ## Target namespace for init data
   targetNamespace: ai-marketplace
+  ## Creation of i4Trust offering
+  i4trust:
+    ## Creation of i4trust offering enabled
+    enabled: True
+    ## internal href base path
+    lpHrefInternal: http://marketplace-biz-ecosystem-logic-proxy.kim-main.svc.cluster.local:8004
+    ## Enpoint of data service (Kong PEP endpoint)
+    serviceEndpoint: https://hella-kong-kong-kim-main.apps.fiware.fiware.dev/diagnosis-i4trust/ngsi-ld/v1
+    ## Endpoint of provider AR (activation service endpoint)
+    arEndpoint: https://hella-as-activation-service-kim-main.apps.fiware.fiware.dev
+    
     
