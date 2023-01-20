@@ -316,7 +316,7 @@ data:
                 "role": "Owner"
             }
         ],
-        "name": "Car Diagnosis Product test",
+        "name": "Car Diagnosis Product (i4Trust)",
         "brand": "Diagnosis Provider",
         "description": "Car Diagnosis data service product"
       }
@@ -369,7 +369,7 @@ data:
         "description": "Car Diagnosis data service",
         "isBundle": False,
         "lifecycleStatus": "Launched",
-        "name": "Car Diagnosis Test",
+        "name": "Car Diagnosis Service (i4Trust)",
         "place": [],
         "productOfferingPrice": [],
         "validFor": {
