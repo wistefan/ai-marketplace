@@ -131,7 +131,7 @@ the [i4Trust Building Blocks documentation](https://github.com/i4Trust/building-
 
 #### Architecture
 
-The following diagrams gives an overview of the involved organisations and components for the i4Trust use case.
+The following diagram gives an overview of the involved organisations and components for the i4Trust use case.
 
 ![i4Trust-Architecture](./doc/img/i4Trust_Architecture.png)
 
@@ -174,4 +174,29 @@ participants/organisations and it is based on the iSHARE Satellite. The satellit
 between data space participants. When receiving requests, it allows organisations to verify the signature of the 
 requesting participants and to ensure that these are trusted and active participants of the data space.
 
+
+
+#### Create service offering
+
+In order to publish the data service, the service provider first needs to create an offering on the marketplace. 
+The following diagram gives an overview of this process.
+
+![i4Trust-Offering](./doc/img/i4Trust_Offering.png)
+
+1. An operator or administrative users visits the data marketplace and is offered different external IDPs that have 
+   been registered at the marketplace. It selects the IDP of the service provider and is forwarded to its login page 
+   for enetering the credentials. 
+2. The IDP will verify against the satellite, whether the marketplace is a trusted 
+   participant of the data space. 
+3. When the login succeeded, the user is sent back to the landing page of the marketplace. The user now can create an 
+   offering for the diagnosis service, providing all necessary information like the actual endpoint of the service, 
+   the endpoint of the authorisation registry or the access rights that organisations will obtain when acquiring this 
+   offering.
+   
+Per default, the offering is automatically created during deployment of this demonstrator. This can be switched off 
+by setting this [parameter](https://github.com/FIWARE-AI-Marketplace/ai-marketplace/blob/066feb618a671f131c776b5c34f536e55266a963/applications/marketplace/values.yaml#L652) to `False` in the marketplace [values.yaml](./applications/marketplace/values.yaml) 
+file.
+
+
+#### Acquisition of service offering
 
