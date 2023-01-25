@@ -35,6 +35,8 @@ retrieve the created hostnames, one can run, e.g.,
 ```shell
 kubectl -n kim-{BRANCH_NAME} get routes
 ```
+or check in the OpenShift console or in ArgoCD.
+
 For the marketplace, when the branch was called `poc`, this might give you something like
 ```shell
 NAME                                      HOST/PORT                                                                PATH   SERVICES                                PORT    TERMINATION     WILDCARD
@@ -85,7 +87,7 @@ The Hella service provider offers endpoints to access data via the different dat
 
 ### i4Trust
 
-When using the i4Trust data space, the NGSI-LD endpoint is reacheable via `/diagnosis-i4trust/ngsi-ld/v1/entities`. 
+When using the i4Trust data space, the NGSI-LD endpoint is reacheable via the path `/diagnosis-i4trust/ngsi-ld/v1/entities`. 
 
 Example call:
 ```shell
@@ -101,3 +103,40 @@ python scripts/get_data_m2m_i4trust.py <NAMESPACE> <PARTY>
 ```
 where `<NAMESPACE>` denotes the mandatory parameter of the deployed namespace (e.g., `kim-{BRANCH_NAME}`) and 
 `<PARTY>` is the optional parameter of the consuming party (default: `autosupplier`, other options: `cardealer`).
+
+
+
+
+## Use case descriptions
+
+The following gives a description of the steps to be performed for the data space use cases in the demonstrator.
+
+
+### i4Trust
+
+The i4Trust use case demonstrates data sharing within an i4Trust data space. This involves iSHARE specifications 
+for the Identity and Access Management (IAM) as well as FIWARE Context Broker technology using NGSI-LD for the actual 
+data exchange. 
+
+The data marketplace allows service providers to offer their services in a plug&play mechanism.  
+Service consumers can discover such offerings and acquire access to them. During the acquisition, the marketplace 
+will automatically create the necessary access policies at the service provider's IAM infrastructure, so that the 
+service consumer can directly start to access the service.
+
+A very detailed description of all involved interactions and requests between the different components during creation 
+of offering, acquisition of offerings and the actual service access, can be found in 
+the [i4Trust Building Blocks documentation](https://github.com/i4Trust/building-blocks).
+
+
+
+#### Architecture
+
+The following diagrams gives an overview of the involved components and organisations for the i4Trust use case.
+
+![i4Trust-Architecture](./doc/img/i4Trust_Architecture.png)
+
+**Data Marketplace**  
+The data marketplace is part of the KI-Marktplatz platform and is based on 
+the [FIWARE Business API Ecosystem](https://business-api-ecosystem.readthedocs.io/en/latest/). It consists of different 
+components for providing the necessary APIS, databases, business logic and user interface.
+
