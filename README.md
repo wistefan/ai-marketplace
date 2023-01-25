@@ -93,16 +93,8 @@ Example call:
 ```shell
 curl -X GET --header "Authorization <JWT>" https://hella-kong-kong-kim-poc.apps.fiware.fiware.dev/diagnosis-i4trust/ngsi-ld/v1/entities/<ENTITY-ID>
 ```
-where `<JWT>` is a signed [iSHARE JWT](https://dev.ishareworks.org/introduction/jwt.html) access token issued by an IDP or by the service provider.
+where `<JWT>` is a signed [iSHARE JWT](https://dev.ishare.eu/introduction/jwt.html) access token issued by an IDP or by the service provider.
 
-There is an example script [get_data_m2m_i4trust.py](./scripts/get_data_m2m_i4trust.py) which automatizes the process of obtaining an access token 
-and retrieving diagnosis data at the Kong instance of the service provider. This should be run on behalf of the service consumer 
-organisation after acquisition of the access rights. It will only work with the FIWARE Kubernetes cluster. Usage:
-```shell
-python scripts/get_data_m2m_i4trust.py <NAMESPACE> <PARTY>
-```
-where `<NAMESPACE>` denotes the mandatory parameter of the deployed namespace (e.g., `kim-{BRANCH_NAME}`) and 
-`<PARTY>` is the optional parameter of the consuming party (default: `autosupplier`, other options: `cardealer`).
 
 
 
@@ -138,27 +130,36 @@ The following diagram gives an overview of the involved organisations and compon
 * Data Marketplace  
 The data marketplace is part of the KI-Marktplatz platform and is based on 
 the [FIWARE Business API Ecosystem](https://business-api-ecosystem.readthedocs.io/en/latest/). It consists of different 
-components for providing the necessary APIS, databases, business logic and user interface.
+components for providing the necessary APIS, databases, business logic and user interface. Different digital asset types 
+are represented by different asset plugins. For a data service based on i4Trust, the 
+[bae-i4trust-service](https://github.com/i4Trust/bae-i4trust-service) plugin is installed, which implements the 
+necessary offering meta data to be entered by service providers and the interactions for creating policies 
+described in the following.
 
 * Cars  
 Cars are continiously sending data to the diagnosis platform for further data processing. This part will be simulated in 
 this demonstrator.
 
 * Service Provider - Hella Diagnosis Platform  
-The diagnosis platform aggregates the car data in order to offer the diagnosis data using a context broker instance 
+The diagnosis platform aggregates the car data in order to offer the diagnosis data using a FIWARE 
+[Context Broker](https://github.com/FIWARE/context.Orion-LD) instance 
 via the NGSI-LD API.  
 The data service is protected by a Policy Enforcement Point (PEP) completed with a Policy Decision 
 Point (PDP) following 
-the [iSHARE specifications](https://ishareworks.atlassian.net/wiki/spaces/IS/pages/70222191/iSHARE+Scheme) for the 
+the [iSHARE specifications](https://dev.ishare.eu/index.html) for the 
 service access. Both functionalities, PEP and PDP, 
 are implemented using the [Kong API Gateway](https://docs.konghq.com/gateway/2.8.x/) and 
 the [ngsi-ishare-policies](https://github.com/FIWARE/kong-plugins-fiware/tree/main/kong-plugin-ngsi-ishare-policies) Kong 
 plugin.  
-When evaluating the requested service access, the PDP will connect to an Authorization Registry following the iSHARE 
-specifications and look up required access policies issued to the requesting organisation. The Authorization 
-Registry is completed with an Activation Service, which allows the marketplace to create policies on behalf of the 
+When evaluating the requested service access, the PDP will connect to an Authorization Registry following 
+the [iSHARE specifications](https://dev.ishare.eu/delegation/endpoint.html) and look up required access policies 
+issued to the requesting organisation (here, the authorization registry functionality is implemented within 
+the [Keyrock](https://fiware-idm.readthedocs.io/en/latest/) Identity Provider). The Authorization 
+Registry is completed with an [Activation Service](https://github.com/i4Trust/activation-service), which allows the 
+marketplace to create policies on behalf of the 
 service provider.  
-Users are registered within the Identity Provider (IDP) based on Keyrock. This allows users, e.g., an operator or 
+Users are registered within the Identity Provider (IDP) based on [Keyrock](https://fiware-idm.readthedocs.io/en/latest/). 
+This allows users, e.g., an operator or 
 administrative user of the service provider, to login at the marketplace and create offering on behalf of the 
 service provider.
 
@@ -172,7 +173,9 @@ users can use scripts or applications for accessing the data service of the serv
 A trust authority is necessary within the data space in order to ensure trust among all data space 
 participants/organisations and it is based on the iSHARE Satellite. The satellite is involved in all interactions 
 between data space participants. When receiving requests, it allows organisations to verify the signature of the 
-requesting participants and to ensure that these are trusted and active participants of the data space.
+requesting participants using 
+the [/trusted_list](https://dev.ishare.eu/scheme-owner/trusted-list.html) endpoint and to ensure that these are trusted 
+and active participants of the data space using the [/parties](https://dev.ishare.eu/scheme-owner/parties.html) endpoint.
 
 
 
@@ -203,7 +206,8 @@ file.
 
 After the offering has been created on the marketplace, it can be discovered and acquired by other organisations. 
 In the following it will be assumed that the automotive supplier will be the consumer organisation, but the process 
-is identically for any other organisations. The following diagram gives an overview of this process.
+is identical for any other organisations acquiring access to the service offering. 
+The following diagram gives an overview of this process.
 
 ![i4Trust-Acquisition](./doc/img/i4Trust_Acquisition.png)
 
@@ -226,7 +230,36 @@ is identically for any other organisations. The following diagram gives an overv
    
 #### Service access
 
+After acquisition of the service offering, the organisation can access the diagnosis service of the service provider. 
+In the following it will be assumed that the automotive supplier will be the consumer organisation, but the process 
+is identical for any other organisations accessing the service. A user of the consumer organisation will use a script 
+or an application for performing the necessary steps of 
+an [iSHARE-based M2M interaction](https://dev.ishare.eu/m2m/authentication.html), described in the following diagram.
 
+![i4Trust-Service-Access](./doc/img/i4Trust_Service-Access.png)  
+
+1. An [iSHARE JWT](https://dev.ishare.eu/introduction/jwt.html) is created and signed by the consumer 
+   organisation. Using this JWT, a request is send to the service provider for retrieving an access token (here, the 
+   Keyrock IDP provides the necessary `/token` endpoint).
+2. The IDP of the service provider verifies the signature of the JWT and checks at the satellite whether the service 
+   consumer is a trusted participant of the data space. A signed JWT access token is returned to the consumer 
+   organisation.
+3. Using the access token, the service consumer sends an NGSI-LD request to the PEP endpoint of the service provider 
+   for retrieving the diagnosis data.
+4. The PDP will verify the signature of the access token using the satellite.
+5. The PDP retrieves the access policies at the authorization registry issued to the consumer organisation and checks, 
+   whether these policies allow the requested NGSI-LD operation.
+6. If access is granted, the PEP will forward the NGSI-LD request to the context broker of the service provider. 
+   The Context Broker response with the diagnosis data is returned to the consumer organisation.
    
-
+There is an example script [get_data_m2m_i4trust.py](./scripts/get_data_m2m_i4trust.py) which automatizes the process of obtaining an access token 
+and retrieving diagnosis data at the PEP/PDP Kong instance of the service provider. This should be run on behalf of the service consumer 
+organisation after acquisition of the access rights. It will only work with the FIWARE Kubernetes cluster, but shows how 
+to perform the necessary operations in a script or application.  
+Usage:
+```shell
+python scripts/get_data_m2m_i4trust.py <NAMESPACE> <PARTY>
+```
+where `<NAMESPACE>` denotes the mandatory parameter of the deployed namespace (e.g., `kim-{BRANCH_NAME}`) and 
+`<PARTY>` is the optional parameter of the consuming party (default: `autosupplier`, other options: `cardealer`).
 
