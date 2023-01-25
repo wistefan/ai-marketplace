@@ -183,15 +183,16 @@ The following diagram gives an overview of this process.
 
 ![i4Trust-Offering](./doc/img/i4Trust_Offering.png)
 
-1. An operator or administrative users visits the data marketplace and is offered different external IDPs that have 
+1. An operator or administrative user visits the data marketplace and is offered different external IDPs that have 
    been registered at the marketplace. It selects the IDP of the service provider and is forwarded to its login page 
-   for enetering the credentials. 
+   for entering the credentials. 
 2. The IDP will verify against the satellite, whether the marketplace is a trusted 
    participant of the data space. 
 3. When the login succeeded, the user is sent back to the landing page of the marketplace. The user now can create an 
-   offering for the diagnosis service, providing all necessary information like the actual endpoint of the service, 
-   the endpoint of the authorisation registry or the access rights that organisations will obtain when acquiring this 
-   offering.
+   offering for the diagnosis service using the i4Trust based asset type, by providing all necessary information like 
+   the actual endpoint of the service, 
+   the endpoint of the authorization registry (more precisely, the endpoint of the activation service) or the access 
+   rights that organisations will obtain when acquiring this offering.
    
 Per default, the offering is automatically created during deployment of this demonstrator. This can be switched off 
 by setting this [parameter](https://github.com/FIWARE-AI-Marketplace/ai-marketplace/blob/066feb618a671f131c776b5c34f536e55266a963/applications/marketplace/values.yaml#L652) to `False` in the marketplace [values.yaml](./applications/marketplace/values.yaml) 
@@ -199,4 +200,33 @@ file.
 
 
 #### Acquisition of service offering
+
+After the offering has been created on the marketplace, it can be discovered and acquired by other organisations. 
+In the following it will be assumed that the automotive supplier will be the consumer organisation, but the process 
+is identically for any other organisations. The following diagram gives an overview of this process.
+
+![i4Trust-Acquisition](./doc/img/i4Trust_Acquisition.png)
+
+1. An operator or administrative user of the service consumer visits the data marketplace and is offered different 
+   external IDPs that have been registered at the marketplace. It selects the IDP of the service consumer (here: 
+   automotive supplier) and is forwarded to its login page for entering the credentials. 
+2. The IDP will verify against the satellite, whether the marketplace is a trusted 
+   participant of the data space. 
+3. The user can browse through the available offerings and selects the i4Trust-based diagnosis service for purchase. 
+   After performing the checkout, the marketplace (more precisely, the i4Trust asset plugin in the charging backend 
+   component) will send a request to the activation service of the service provider for creating a policy issued to 
+   the service consumer (here: the automotive supplier) stating the necessary attribute-based access rights for 
+   accessing the NGSI-LD based diagnosis service of the service provider. 
+4. Before inserting the policy into the authorization registry, the activation service will verify that the marketplace 
+   is allowed to create policies on behalf of the service provider. This is done by checking for a policy issued to 
+   the marketplace that was created during [deployment](./applications/hella-keyrock/templates/create-policy-cm.yaml). 
+   Furthermore, it is verified against the satellite, that the marketplace is a trusted participant of the data space 
+   and provided a valid signature.
+   
+   
+#### Service access
+
+
+   
+
 
