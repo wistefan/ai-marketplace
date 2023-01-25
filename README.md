@@ -131,12 +131,47 @@ the [i4Trust Building Blocks documentation](https://github.com/i4Trust/building-
 
 #### Architecture
 
-The following diagrams gives an overview of the involved components and organisations for the i4Trust use case.
+The following diagrams gives an overview of the involved organisations and components for the i4Trust use case.
 
 ![i4Trust-Architecture](./doc/img/i4Trust_Architecture.png)
 
-**Data Marketplace**  
+* Data Marketplace  
 The data marketplace is part of the KI-Marktplatz platform and is based on 
 the [FIWARE Business API Ecosystem](https://business-api-ecosystem.readthedocs.io/en/latest/). It consists of different 
 components for providing the necessary APIS, databases, business logic and user interface.
+
+* Cars  
+Cars are continiously sending data to the diagnosis platform for further data processing. This part will be simulated in 
+this demonstrator.
+
+* Service Provider - Hella Diagnosis Platform  
+The diagnosis platform aggregates the car data in order to offer the diagnosis data using a context broker instance 
+via the NGSI-LD API.  
+The data service is protected by a Policy Enforcement Point (PEP) completed with a Policy Decision 
+Point (PDP) following 
+the [iSHARE specifications](https://ishareworks.atlassian.net/wiki/spaces/IS/pages/70222191/iSHARE+Scheme) for the 
+service access. Both functionalities, PEP and PDP, 
+are implemented using the [Kong API Gateway](https://docs.konghq.com/gateway/2.8.x/) and 
+the [ngsi-ishare-policies](https://github.com/FIWARE/kong-plugins-fiware/tree/main/kong-plugin-ngsi-ishare-policies) Kong 
+plugin.  
+When evaluating the requested service access, the PDP will connect to an Authorization Registry following the iSHARE 
+specifications and look up required access policies issued to the requesting organisation. The Authorization 
+Registry is completed with an Activation Service, which allows the marketplace to create policies on behalf of the 
+service provider.  
+Users are registered within the Identity Provider (IDP) based on Keyrock. This allows users, e.g., an operator or 
+administrative user of the service provider, to login at the marketplace and create offering on behalf of the 
+service provider.
+
+* Service Consumers - Automotive Supplier and Car Dealer  
+The service consumer organisations, the automotive supplier and the car dealer, both operate own instances of 
+IDPs, where their users are registered. This allows administrative users to login at the marketplace and acquire 
+access to the service provider's offering on behalf of the service consumer organisation. After service acquisition, 
+users can use scripts or applications for accessing the data service of the service provider.
+
+* Trust Authority - iSHARE Satellite  
+A trust authority is necessary within the data space in order to ensure trust among all data space 
+participants/organisations and it is based on the iSHARE Satellite. The satellite is involved in all interactions 
+between data space participants. When receiving requests, it allows organisations to verify the signature of the 
+requesting participants and to ensure that these are trusted and active participants of the data space.
+
 
