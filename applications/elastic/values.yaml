@@ -3,6 +3,9 @@ elasticsearch:
   minimumMasterNodes: 1
   clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
 
+  persistence:
+    enabled: false
+
   rbac:
     create: false
     serviceAccountName: elasticsearch-sa
