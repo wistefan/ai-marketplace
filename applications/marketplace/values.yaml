@@ -659,8 +659,9 @@ initData:
     # Upload image for offering
     uploadImage: true
     # Path to offering image
-    imagePath: "https://github.com/FIWARE-Ops/i4trust-demonstrator/raw/main/doc/img/Offerings-Standard_Basic.png"
+    imagePath: "https://github.com/FIWARE-AI-Marketplace/ai-marketplace/raw/main/doc/img/Offering_Image.png"
     # Filename of offering image
-    imageFilename: "PacketDeliveryBasic__Offerings-Standard_Basic.png"
+    imageFilename: "CarDiagnosis__Offering_Image.png"
+
     
     
