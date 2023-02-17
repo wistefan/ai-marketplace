@@ -8,15 +8,48 @@ metadata:
     "helm.sh/hook-weight": "5"
 data:
   entrypoint.sh: |-
-    pip install requests pymongo
+    pip3 install requests pymongo
     echo "Creating offering for i4Trust..."
+
+    {{ if .Values.initData.i4trust.uploadImage -}}
+    # Create dir for download of offering images
+    mkdir -p /tmp/offering
+    
+    {{- end }}
+
+    # Create offering   
     python /scripts/create.py
+
+    {{ if .Values.initData.i4trust.uploadImage -}}
+    # Create dir in pod for uploading of offering images
+    echo "============="
+    echo "Uploading image for offering"
+    echo "Login to OC cluster"
+    oc login $OPENSHIFT_SERVER --token="${OPENSHIFT_TOKEN}"
+    echo "Target namespace:" $TARGET_NAMESPACE
+    echo "Get ChargingBackend pod"
+    POD_NAME=`kubectl -n $TARGET_NAMESPACE get pod -l component=biz-ecosystem-charging-backend -o jsonpath='{.items[0].metadata.name}'`
+    echo $POD_NAME
+    OPERATORID=`cat /tmp/offering/operator.txt`
+    echo "Create asset media directory for service provider"
+    kubectl -n $TARGET_NAMESPACE exec -i $POD_NAME -c business-api-ecosystem-biz-ecosystem-charging-backend -- mkdir -p /opt/business-ecosystem-charging-backend/src/media/assets/${OPERATORID}
+
+    # Download and copy image for offering
+    echo "Download and copy image for basic offering"
+    cd /tmp/offering
+    wget {{ .Values.initData.i4trust.imagePath }} -O /tmp/offering/{{ .Values.initData.i4trust.imageFilename }}
+    kubectl -n $TARGET_NAMESPACE -c business-api-ecosystem-biz-ecosystem-charging-backend cp /tmp/offering/{{ .Values.initData.i4trust.imageFilename }} $POD_NAME:/opt/business-ecosystem-charging-backend/src/media/assets/${OPERATORID}/.
+    
+    {{- end }}
+    
   create.py: |-
     import requests
     from requests.exceptions import HTTPError
     from pymongo import MongoClient
     from bson import ObjectId
     import sys
+
+    OPERATOR_OUT_FILE = "/tmp/offering/operator.txt"
     
     def main():
       KEYROCK_HOST = "http://hella-keyrock:8080"
@@ -31,6 +64,7 @@ data:
       PLUGIN_ID = "ngsi-ld-data-service"
       ASSET_TYPE = "NGSI-LD Data Service"
       CATALOG_NAME = "Car Diagnosis"
+      OFFER_IMG = {{ .Values.initData.i4trust.imageFilename | quote }}
       MONGODB_HOST = "mongodb"
       MONGODB_USER = "root"
       MONGODB_PW = "dbPassword"
@@ -183,6 +217,29 @@ data:
       resource = col_resource.find_one({'_id': resource_result.inserted_id})
       resource_id = resource['_id']
       print(" --> Created resource:", resource_id, resource)
+
+      # Simulate uploadJob of image upload --> fill wstore_resource, with provider_id = _id param from created org
+      print("Insert resource for digital asset in MongoDB")
+      col_resource = db['wstore_resource']
+      img_resource_insert = {
+        "product_id": None,
+        "version": "",
+        "provider_id": ObjectId(org_id),
+        "content_type": "image/png",
+        "download_link": LP_EXTERNAL_HOST+"/charging/media/assets/"+operator_id+"/"+OFFER_IMG,
+        "resource_path": "media/assets/"+operator_id+"/"+OFFER_IMG,
+        "old_versions": None,
+        "state": "",
+        "resource_type": "",
+        "is_public": True,
+        "has_terms": False,
+        "bundled_assets": [],
+        "meta_info": {}
+      }
+      img_resource_result = col_resource.insert_one(img_resource_insert)
+      img_resource = col_resource.find_one({'_id': img_resource_result.inserted_id})
+      img_resource_id = img_resource['_id']
+      print(" --> Created resource:", img_resource_id, img_resource)
     
       # POST productSpec
       spec_header = {
@@ -306,7 +363,8 @@ data:
         "productSpecificationRelationship": [],
         "attachment": [
             {
-                "type": "Picture"
+                "type": "Picture",
+                "url": LP_EXTERNAL_HOST+"/charging/media/assets/"+operator_id+"/"+OFFER_IMG
             }
         ],
         "relatedParty": [
@@ -431,6 +489,18 @@ data:
       }
       offering_result = col_offering.insert_one(offering_insert)
       print(" --> Created offering in DB!")
+
+
+      {{ if .Values.initData.i4trust.uploadImage -}}
+
+      # Store operator ID in file for further processing
+      if operator_id:
+        f = open(OPERATOR_OUT_FILE, "a")
+        f.write(operator_id)
+        f.close()
+        
+      {{- end }}
+      
 
 
     if __name__ == "__main__":
