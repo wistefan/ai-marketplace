@@ -74,9 +74,10 @@ def main():
     args = sys.argv[1:]
     if len(args) < 1:
         print("ERROR: Provide at least the namespace as argument")
-        print("Usage: python get_data_m2m_i4Trust.py <NAMESPACE> <PARTY>")
+        print("Usage: python get_data_m2m_i4Trust.py <NAMESPACE> <PARTY> <OPERATION>")
         print("   NAMESPACE: The namespace where components have been deployed, e.g., kim-poc")
         print("   PARTY: The consuming party of the data space, e.g., autosupplier or cardealer (optional, default: autosupplier)")
+        print("   OPERATION: Type of operation, GET or POST (optional, default: GET)")
         sys.exit(2)
 
     # Get namespace
@@ -101,10 +102,20 @@ def main():
         else:
             print("Unknown consuming party: " + party)
             sys.exit(3)
+
+    # Get operation if specified
+    operation = "GET"
+    if len(args) > 2:
+        operation = args[2].upper()
+    if operation not in ["GET", "POST"]:
+        print("Unknown operation specified: " + operation)
+        
+            
     print("EORI of consuming party: " + EORI)
     print("Using key/cert files:")
     print("  KEY: " + KEY_FILE)
     print("  CERT: " + CERT_FILE)
+    print("Operation: " + operation)
     
     # Generate iSHARE JWT of consumer
     token = build_token({
@@ -126,18 +137,20 @@ def main():
         'client_assertion': token
     }
     print(" ")
+    print("==========================")
     print("Getting access token from " + token_url)
     response = requests.post(token_url, data=auth_params)
+    print("-----------------------------")
     try:
         response.raise_for_status()
     except HTTPError as e:
-        print(e.request.body)
+        print("Response:")
         print(e)
-        print(e.response.text)
         print(response.json())
         sys.exit(4)
     auth_data = response.json()
     if not auth_data['access_token']:
+        print("Response:")
         print("ERROR: No access token in response")
         sys.exit(4)
     access_token = auth_data['access_token']
@@ -146,25 +159,62 @@ def main():
     print(json.dumps(access_token_decoded, indent=4, sort_keys=True))
     
     # Get data from Context Broker
-    target_url = target_url + "/entities"
-    print("Getting entities of type " + ENTITY_TYPE + " from provider endpoint: " + target_url)
-    params = {
-        'type': ENTITY_TYPE,
-        'options': 'keyValues'
-    }
-    headers = {
-        'Authorization': 'Bearer ' + access_token,
-        'Accept': 'application/json'
-    }
-    response = requests.get(target_url, params=params, headers=headers) #, verify=False)
-    try:
-        response.raise_for_status()
-    except HTTPError as e:
-        print(e)
-        print(response.json())
-        sys.exit(4)
-    response_data = response.json()
-    print(json.dumps(response_data, indent=4, sort_keys=True))
+    if operation == "GET":
+        target_url = target_url + "/entities"
+        print(" ")
+        print("==========================")
+        print("Getting entities of type " + ENTITY_TYPE)
+        print("Sending request: GET " + target_url)
+        params = {
+            'type': ENTITY_TYPE,
+            'options': 'keyValues'
+        }
+        headers = {
+            'Authorization': 'Bearer ' + access_token,
+            'Accept': 'application/json'
+        }
+        print("Parameters:")
+        print(json.dumps(params, indent=4, sort_keys=True))
+        response = requests.get(target_url, params=params, headers=headers) #, verify=False)
+        print("-----------------------------")
+        print("Response:")
+        try:
+            response.raise_for_status()
+        except HTTPError as e:
+            print(e)
+            print(response.json())
+            sys.exit(4)
+        response_data = response.json()
+        print(json.dumps(response_data, indent=4, sort_keys=True))
+    elif operation == "POST":
+        target_url = target_url + "/entities"
+        print(" ")
+        print("==========================")
+        print("Create entity of type " + ENTITY_TYPE)
+        print("Sending request: POST " + target_url)
+        body = {
+            "id": "urn:ngsi-ld:DUMMY:ID003",
+            "param1": "val1",
+            "param2": "val2",
+            "type": "DUMMY"
+        }
+        headers = {
+            'Authorization': 'Bearer ' + access_token,
+            'Accept': 'application/json'
+        }
+        print("Body:")
+        print(json.dumps(body, indent=4, sort_keys=True))
+        response = requests.post(target_url, json=body, headers=headers) #, verify=False)
+        print("-----------------------------")
+        print("Response:")
+        try:
+            response.raise_for_status()
+        except HTTPError as e:
+            print(e)
+            print(response.json())
+            sys.exit(4)
+        response_data = response.json()
+        print(json.dumps(response_data, indent=4, sort_keys=True))
     
 
 if __name__ == "__main__":

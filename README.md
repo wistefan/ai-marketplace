@@ -258,8 +258,9 @@ organisation after acquisition of the access rights. It will only work with the 
 to perform the necessary operations in a script or application.  
 Usage:
 ```shell
-python scripts/get_data_m2m_i4trust.py <NAMESPACE> <PARTY>
+python scripts/get_data_m2m_i4trust.py <NAMESPACE> <PARTY> <OPERATION>
 ```
-where `<NAMESPACE>` denotes the mandatory parameter of the deployed namespace (e.g., `kim-{BRANCH_NAME}`) and 
-`<PARTY>` is the optional parameter of the consuming party (default: `autosupplier`, other options: `cardealer`).
+where `<NAMESPACE>` denotes the mandatory parameter of the deployed namespace (e.g., `kim-{BRANCH_NAME}`), 
+`<PARTY>` is the optional parameter of the consuming party (default: `autosupplier`, other options: `cardealer`) and 
+`<OPERATION>` is the optional parameter of the type of the operation (default: `GET`, other options: `POST`).
 
