@@ -19,12 +19,14 @@ keyrock:
       ## ref: https://hub.docker.com/r/fiware/idm
       repository: quay.io/fiware/idm
       ## tag of the image to be used
-      #tag: 7.8.2
-      #tag: 8.0.0
       tag: kim-dev-rc8
       ## specification of the image pull policy
       #pullPolicy: Always
       pullPolicy: IfNotPresent
+    startupProbe:
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      failureThreshold: 10
 
   ## openshift specific route definition. Will not work on plain k8s
   route:

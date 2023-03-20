@@ -5,6 +5,10 @@ keyrock:
       tag: 8.3.0
       #pullPolicy: Always
       pullPolicy: IfNotPresent
+    startupProbe:
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      failureThreshold: 10
 
   db:
     user: root
