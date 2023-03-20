@@ -11,16 +11,14 @@ mongodb:
   image:
     ## Bitnami MongoDB registry
     ##
-    registry: docker.io
+    registry: quay.io
     ## Bitnami MongoDB image name
     ##
-    repository: bitnami/mongodb
+    repository: i4trust/mongodb
     ## Bitnami MongoDB image tag
     ## ref: https://hub.docker.com/r/bitnami/mongodb/tags/
     ##
-    #tag: 3.6.21
     tag: 4.4.13
-    #tag: 3.4.10-r0
     ## Specify a imagePullPolicy
     ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
     ##

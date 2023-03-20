@@ -8,8 +8,10 @@ mysql:
   #   *.apps.fiware.fiware.dev
   #
 
-  image: "mysql"
+  image: "quay.io/i4trust/mysql"
   imageTag: "5.7"
+  busybox:
+    image: "quay.io/i4trust/busybox"
 
   ## Specify password for root user
   ##
