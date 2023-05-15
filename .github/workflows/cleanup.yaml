@@ -2,15 +2,17 @@ name: Delete apps and namespace after deleting branch
 
 # trigger on branch deletion to bind the namespaces lifecycle to the branch lifecycle
 on:
-  delete:
-    branches-ignore:
-      - main
+  delete
 
 jobs:
 
   delete:
-
+    if: |
+      github.event.ref_type =='branch' && 
+      startswith(github.event.ref, 'poc')
+      
     runs-on: ubuntu-latest
+    
     steps:
 
       - name: Git checkout
@@ -35,6 +37,7 @@ jobs:
           # remove all apps deployed for the namespace corresponding to the branch
           oc delete application -l destination-namespace=kim-${{ github.event.ref }} -n argocd
       # delete the namespace associated to the trigger event's branch
+
       - name: Delete namespace
         run: |
           oc delete project kim-${{ github.event.ref }}
