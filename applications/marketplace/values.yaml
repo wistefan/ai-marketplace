@@ -394,12 +394,12 @@ business-api-ecosystem:
             # -- configuration for certificate generation.
             # -- see: https://github.com/FIWARE-Ops/fiware-gitops/blob/master/doc/ROUTES.md
           # -- host to be used
-          #host: marketplace.ki-marktplatz.fiware.dev
+          host: bae-lp.kim-main.fiware.dev
           # -- tls configuration for the route
-          #certificate:
-          #  issuer:
-          #    kind: ClusterIssuer
-          #    name: letsencrypt-aws-prod
+          certificate:
+            issuer:
+              kind: ClusterIssuer
+              name: letsencrypt-aws-prod
 
     ## ingress configuration
     ## OpenShift: oc label namespace marketplace ingress=nginx

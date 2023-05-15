@@ -2,7 +2,7 @@ keyrock:
   statefulset:
     image:
       repository: quay.io/fiware/idm
-      tag: 8.3.0
+      tag: 8.3.3
       #pullPolicy: Always
       pullPolicy: IfNotPresent
     startupProbe:

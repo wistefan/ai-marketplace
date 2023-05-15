@@ -22,17 +22,17 @@ applications:
             id: "EU.EORI.DEHELLA"
             server: "https://hella-keyrock-0-kim-main.apps.fiware.fiware.dev"
             description: "Employee IDP of Hella"
-            callbackURL: "https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev/auth/EU.EORI.DEHELLA/callback"
+            callbackURL: "https://bae-lp.kim-main.fiware.dev/auth/EU.EORI.DEHELLA/callback"
           - name: "Automotive Supplier"
             id: "EU.EORI.DEAUTOSUPPLIER"
             server: "https://autosupplier-keyrock-0-kim-main.apps.fiware.fiware.dev"
             description: "Employee IDP of Automotove Supplier"
-            callbackURL: "https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev/auth/EU.EORI.DEAUTOSUPPLIER/callback"
+            callbackURL: "https://bae-lp.kim-main.fiware.dev/auth/EU.EORI.DEAUTOSUPPLIER/callback"
           - name: "Car Dealer"
             id: "EU.EORI.DECARDEALER"
             server: "https://cardealer-keyrock-0-kim-main.apps.fiware.fiware.dev"
             description: "Employee IDP of Car Dealer"
-            callbackURL: "https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev/auth/EU.EORI.DECARDEALER/callback"
+            callbackURL: "https://bae-lp.kim-main.fiware.dev/auth/EU.EORI.DECARDEALER/callback"
 
   - name: mysql
     enabled: true
@@ -60,8 +60,8 @@ applications:
     values:
       marketplace:
         id: 71049899-b919-4d0f-9303-e5d2fd1bbb90
-        url: https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev
-        redirectUrl: https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev/auth/fiware/callback
+        url: https://bae-lp.kim-main.fiware.dev
+        redirectUrl: https://bae-lp.kim-main.fiware.dev/auth/fiware/callback
       keyrock:
         host: https://keyrock-0-kim-main.apps.fiware.fiware.dev
         
@@ -76,7 +76,7 @@ applications:
       loadPlugins:
         targetNamespace: kim-main
       initData:
-        lpHref: https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev
+        lpHref: https://bae-lp.kim-main.fiware.dev
         targetNamespace: kim-main
         i4trust:
           lpHrefInternal: http://marketplace-biz-ecosystem-logic-proxy.kim-main.svc.cluster.local:8004
@@ -89,13 +89,23 @@ applications:
           server: https://keyrock-0-kim-main.apps.fiware.fiware.dev
           clientId: 71049899-b919-4d0f-9303-e5d2fd1bbb90
           clientSecret: f7e11746-b84f-4748-86e5-107146e888h7
-        externalUrl: https://marketplace-biz-ecosystem-logic-proxy-0-kim-main.apps.fiware.fiware.dev
+        externalUrl: https://bae-lp.kim-main.fiware.dev
         bizEcosystemChargingBackend:
           db:
             host: mongodb.kim-main.svc.cluster.local
         bizEcosystemLogicProxy:
           db:
             host: mongodb.kim-main.svc.cluster.local
+          route:
+            routes:
+              - tls:
+                  termination: edge
+                  insecureEdgeTerminationPolicy: Redirect
+                host: bae-lp.kim-main.fiware.dev
+                certificate:
+                  issuer:
+                    kind: ClusterIssuer
+                    name: letsencrypt-aws-prod                        
 
   - name: ishare-satellite
     enabled: true
